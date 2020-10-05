@@ -1,1 +1,0 @@
-https://solidity-by-example.org/0.6/app/erc20/
