@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="dist/web3.min.js"></script>
+     <script type="text/javascript" src="abi.js"></script>
+    
+    <script type="text/javascript">
+    
+  
+
+    const ethEnabled = () => {
+        if (window.ethereum) {
+            window.web3 = new Web3(window.ethereum);
+            window.ethereum.enable();
+            return true;
+        }
+        return false;
+    }
+
+    var ethereumButton;
+    var address = "";
+    window.onload = function(){
+        ethereumButton = document.getElementById("enableEthereumButton");
+        contractButton = document.getElementById("Contract");
+
+        ethereumButton.addEventListener('click', () => {
+         getAccount();
+
+        });
+
+         contractButton.addEventListener('click', () => {
+            getAEURO();
+        });
+    };
+
+
+    async function getAccount() {
+
+            //Will Start the metamask extension            
+            await window.ethereum.request({ method: 'eth_requestAccounts' });
+            
+            if (!ethEnabled()) {
+                alert("Please install an Ethereum-compatible browser or extension like MetaMask to use this dApp!");
+            }else{
+                window.web3.eth.getAccounts(console.log);               
+            }
+    }
+    
+    async function getAEURO() {       
+        var MyContract = new web3.eth.Contract(abi, '0x284357BEA8cAEE783Cf727Ff27128d4446f1EEC3');
+        (window.web3.eth.getAccounts()).then(function(result){
+            
+            MyContract.methods.balanceOf(result[0]).call()
+            .then(function(result){
+                var raw = result;
+                var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
+
+                console.log(shifted);
+                document.getElementById("Monee").innerHTML = "coins: " + shifted;
+            });
+
+        });
+        
+    }
+
+    </script>
+</head>
+<body>
+
+<button id="enableEthereumButton">Enable Ethereum</button>
+
+<button id="Contract">test contract</button>
+
+<br>
+
+<span id="Monee">coins: 0</span>
+
+
+</body>
+</html>
