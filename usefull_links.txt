@@ -1,2 +1,6 @@
 https://solidity-by-example.org/0.6/app/erc20/
 https://ethonline.org/
+https://ethernaut.openzeppelin.com/
+https://docs.openzeppelin.com/contracts/3.x/
+https://consensys.net/blog/blockchain-development/how-to-send-money-using-python-a-web3-py-tutorial/
+https://docs.openzeppelin.com/learn/developing-smart-contracts
