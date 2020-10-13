@@ -2,8 +2,8 @@
 An simple dapp to hedge exchange rate risk using tokenized interest bearing stablecoins
 
 ## Motivation
-Stablecoins are a well-known instrument for hedging the volatility of crypto currencies. They can be fixed in a lending protocol and become an attractive alternative to savings accounts. However, most Stablecoins are demonised in US dollars. This is useful as it allows specialised AMMs such as Curve to trade between them without any problems. 
-However, US Stablecoins may be unattractive to many people outside the United States. Since their income, expenses and/or tax liabilities are most likely denominated in a currency other than the Stable Coin. This creates an exchange rate risk for their savings accounts (safe part of the portfolio).  
+Stablecoins are a well-known instrument for hedging the volatility of crypto currencies. When  supplied to a lending protocol and they become an attractive alternative to a savings accounts. However, most Stablecoins are demonised in US dollars. This is useful as it allows specialised AMMs such as Curve to trade between them without any wild fluctuations. 
+However, US Stablecoins may be unattractive to many people outside the United States. Since their income, expenses and/or tax liabilities are most likely denominated in a currency other than the stablecoin. This creates an exchange rate risk for their savings accounts (which is considered to be the safe part of the household portfolio).  
 Even exchange rates between economically developed and large economies are remarkably volatile and can fluctuate widely over several months. For example, the EURO  lost 20% of its value in 2007/2008.
 (There are numerous examples of rapid exchange rate movements for small countries. E.g. https://en.wikipedia.org/wiki/Turkish_currency_and_debt_crisis,_2018 or https://en.wikipedia.org/wiki/2018_Argentine_monetary_crisis for sharp declines or a sudden increase https://en.wikipedia.org/wiki/Swiss_franc).
 All this makes the latest innovation in DEFI less valuable to people outside the US. 
