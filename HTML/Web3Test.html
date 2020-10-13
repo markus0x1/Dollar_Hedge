@@ -1,82 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <script type="text/javascript" src="dist/web3.min.js"></script>
-     <script type="text/javascript" src="abi.js"></script>
-    
+
+    <script type="text/javascript" src="abis/aEuroS.js"></script>
+    <script type="text/javascript" src="abis/aDai.js"></script>
+
     <script type="text/javascript">
-    
-  
-
-    const ethEnabled = () => {
-        if (window.ethereum) {
-            window.web3 = new Web3(window.ethereum);
-            window.ethereum.enable();
-            return true;
-        }
-        return false;
-    }
-
-    var ethereumButton;
-    var address = "";
-    window.onload = function(){
-        ethereumButton = document.getElementById("enableEthereumButton");
-        contractButton = document.getElementById("Contract");
-
-        ethereumButton.addEventListener('click', () => {
-         getAccount();
-
-        });
-
-         contractButton.addEventListener('click', () => {
-            getAEURO();
-        });
-    };
-
-
-    async function getAccount() {
-
-            //Will Start the metamask extension            
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
-            
-            if (!ethEnabled()) {
-                alert("Please install an Ethereum-compatible browser or extension like MetaMask to use this dApp!");
-            }else{
-                window.web3.eth.getAccounts(console.log);               
+        const ethEnabled = () => {
+            if (window.ethereum) {
+                window.web3 = new Web3(window.ethereum);
+                window.ethereum.enable();
+                return true;
             }
-    }
-    
-    async function getAEURO() {       
-        var MyContract = new web3.eth.Contract(abi, '0x284357BEA8cAEE783Cf727Ff27128d4446f1EEC3');
-        (window.web3.eth.getAccounts()).then(function(result){
-            
-            MyContract.methods.balanceOf(result[0]).call()
-            .then(function(result){
-                var raw = result;
-                var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
+            return false;
+        }
 
-                console.log(shifted);
-                document.getElementById("Monee").innerHTML = "coins: " + shifted;
+        var ethereumButton;
+        var address = "";
+        window.onload = function() {
+            ethereumButton = document.getElementById("enableEthereumButton");
+            contractButton = document.getElementById("Contract");
+
+            ethereumButton.addEventListener('click', () => {
+                getAccount();
+
             });
 
-        });
-        
-    }
+            contractButton.addEventListener('click', () => {
+                getAEURO();
+            });
+        };
 
+
+        async function getAccount() {
+
+            //Will Start the metamask extension            
+            await window.ethereum.request({
+                method: 'eth_requestAccounts'
+            });
+
+            if (!ethEnabled()) {
+                alert("Please install an Ethereum-compatible browser or extension like MetaMask to use this dApp!");
+            } else {
+                window.web3.eth.getAccounts(console.log);
+                getADai();
+            }
+        }
+
+        async function getAEURO() {
+            var MyContract = new web3.eth.Contract(abi, '0x284357BEA8cAEE783Cf727Ff27128d4446f1EEC3');
+            (window.web3.eth.getAccounts()).then(function(result) {
+
+                MyContract.methods.balanceOf(result[0]).call()
+                    .then(function(result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
+
+                        console.log(shifted);
+                        document.getElementById("Monee").innerHTML = "coins: " + shifted;
+                    });
+
+
+
+                MyContract.methods.totalSupply().call()
+                    .then(function(result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
+
+                        console.log(shifted);
+                        document.getElementById("MarketSize").innerHTML = "Pool: " + shifted;
+                    });
+
+            });
+        }
+
+
+        async function Addallowance() {
+            var MyContract = new web3.eth.Contract(abi, '0x284357BEA8cAEE783Cf727Ff27128d4446f1EEC3');
+            (window.web3.eth.getAccounts()).then(function(result) {
+
+                MyContract.methods.increaseAllowance(result[0], 500).call()
+                    .then(function(result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
+
+                        console.log(shifted);
+                        //document.getElementById("Monee").innerHTML = "coins: " + shifted;
+                    });
+
+            });
+        }
+
+
+        async function getADai() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {
+
+                MyContract.methods.balanceOf(result[0]).call()
+                    .then(function(result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
+
+                        console.log(shifted);
+                        document.getElementById("aDai").innerHTML = "your aDai: " + shifted;
+                    });
+
+            });
+
+        }
     </script>
 </head>
+
 <body>
 
-<button id="enableEthereumButton">Enable Ethereum</button>
+    <div class="container">
 
-<button id="Contract">test contract</button>
-
-<br>
-
-<span id="Monee">coins: 0</span>
+        <div class="row">
+            <!-- Page Content goes here -->
 
 
+            <div class="col s12">
+                <div id="aDai"> your aDai: 0</div>
+            </div>
+
+            <div class="col s12">
+                <div id="aDaiSupplied"> your aDai Deposit is: 0</div>
+            </div>
+
+            <div class="col s12">
+                <div id="MarketSize">Pool: 0</div>
+            </div>
+
+            <button id="enableEthereumButton" class="waves-effect waves-light btn">Enable Wallet</button>
+            <button id="Add allowance" class="waves-effect waves-light btn">Add Allowance</button>
+            <button id="Contract" class="waves-effect waves-light btn">Get Coins</button>
+
+            <button id="aDai in Wallet" class="waves-effect waves-light btn">Get Coins</button>
+
+            <button class="waves-effect waves-light btn">deposit aDai</button>
+
+            <button class="waves-effect waves-light btn">Mint Euro Stable</button>
+            <button class="waves-effect waves-light btn">Mint Lucky Euro</button>
+
+
+
+            <br>
+
+
+            <span id="Monee">coins: 0</span>
+        </div>
+    </div>
+
+
+
+    <!--JavaScript at end of body for optimized loading-->
+    <script type="text/javascript" src="js/materialize.min.js"></script>
 </body>
+
 </html>
