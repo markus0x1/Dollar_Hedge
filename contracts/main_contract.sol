@@ -22,7 +22,6 @@ contract MainContract is Ownable {
      */
     constructor() public {
         priceFeed = AggregatorV3Interface(0x0c15Ab9A0DB086e062194c273CC79f41597Bbf13);
-        exchange_rate = 118186500;
     }
 
     function getLatestPrice() public view returns (int) {
@@ -43,6 +42,7 @@ contract MainContract is Ownable {
     int exchange_rate_t0;
     int exchange_rate_t1;
     int limit_exchange_rate_t1;
+    int limit_exchange_rate_t1r;
 
     uint total_pool_balance_t0;
     uint total_pool_balance_t1;
@@ -57,7 +57,7 @@ contract MainContract is Ownable {
 
     // some random events
     event SetExchangeRate (
-        int exchange_rate,
+        int exchange_rate
     );
 
     // mappings
@@ -72,13 +72,13 @@ contract MainContract is Ownable {
 
     function start_saving() public onlyOwner {
         round_is_over = true;
-        exchange_rate_t0 = _update_exchange_rate();
+        exchange_rate_t0 = getLatestPrice();
     }
 
     function start_redeeming() public onlyOwner {
         saving_is_over = true;
-        exchange_rate_t1 = _update_exchange_rate();
-        limit_exchange_rate_t1 = min(max(exchange_rate_t1,0.5*exchange_rate_t0),1.5*exchange_rate_t0);
+        exchange_rate_t1 = getLatestPrice();
+        limit_exchange_rate_t1 = min(max(exchange_rate_t1,exchange_rate_t0.mul(1)),exchange_rate_t0.mul(1));
         limit_exchange_rate_t1r = max(min(exchange_rate_t1.mul(10**8).div(exchange_rate_t0),15*10**7),5*10**7);
         total_pool_balance_t1 = aDai.balanceOf(address(this));
         total_interest_payments = total_pool_balance_t1.sub(total_pool_balance_t0);
@@ -92,7 +92,7 @@ contract MainContract is Ownable {
     }
 
     function mint_tokens() external {
-      require(round_is_over, "Can not mint before investment round ended")
+      require(round_is_over, "Can not mint before investment round ended");
       uint aDai_amount = pre_pool_balances[msg.sender];
       pre_pool_balances[msg.sender] = pre_pool_balances[msg.sender].sub(aDai_amount);
       _mint_euro_stable(aDai_amount.div(2));
@@ -102,23 +102,20 @@ contract MainContract is Ownable {
     // redeem derivative tokens
     function redeem_euro_stable(uint aEURs_amount) external{
         require(saving_is_over, "Saving period has not stopped yet");
-        uint usd_amount_retail = aEURs_to_aDai(aEURs_amount);
+        uint usd_amount_retail = _aEURs_to_aDai(aEURs_amount);
         aEURs.burn(aEURs_amount);
         aDai.transfer(msg.sender, usd_amount_retail);
     }
 
     function redeem_euro_unstable(uint aEURu_amount) external{
         require(saving_is_over, "Saving period has not stopped yet");
-        uint usd_amount_hedger = aEURu_to_aDai(aEURu_amount);
+        uint usd_amount_hedger = _aEURu_to_aDai(aEURu_amount);
         aEURu.burn(aEURu_amount);
         aDai.transfer(msg.sender, usd_amount_hedger);
     }
 
 
-    // exchange rate information
-    function get_exchange_rate() public view returns (int) {
-        return exchange_rate;
-    }
+
 
     // utilities
     function get_contract_adress() public view returns (address) {
@@ -149,12 +146,6 @@ contract MainContract is Ownable {
         return aDai_address;
     }
 
-    // change exchange rate information
-    function _update_exchange_rate () internal {
-        int  old_exchange_rate = exchange_rate;
-        exchange_rate = getLatestPrice();
-        emit SetExchangeRate (exchange_rate);
-    }
 
     // redirect interest to contract
     //function is_not_redirected() internal returns (bool) {
@@ -163,7 +154,7 @@ contract MainContract is Ownable {
 
     // mint derivative tokens
     function _mint_euro_stable(uint aDai_amount) internal{
-        uint256 aEURs_amount = to_aEURs(aDai_amount);
+        uint256 aEURs_amount = _to_aEURs(aDai_amount);
         aEURs.mint(msg.sender,aEURs_amount);
     }
     function _to_aEURs(uint _amount) internal returns (uint256) {
