@@ -70,6 +70,7 @@ contract MainContract is Ownable {
     ERC20 public aDai;
 
 
+
     function start_saving() public onlyOwner {
         round_is_over = true;
         exchange_rate_t0 = uint(getLatestPrice());
@@ -105,14 +106,16 @@ contract MainContract is Ownable {
     function redeem_euro_stable(uint aEURs_amount) external{
         require(saving_is_over, "Saving period has not stopped yet");
         uint usd_amount_retail = _aEURs_to_aDai(aEURs_amount);
-        aEURs.burn(aEURs_amount);
+        // aEURs.burn(aEURs_amount);
+        aEURs.transfer(address(this), aEURs_amount);
         aDai.transfer(msg.sender, usd_amount_retail);
     }
 
     function redeem_euro_unstable(uint aEURu_amount) external{
         require(saving_is_over, "Saving period has not stopped yet");
         uint usd_amount_hedger = _aEURu_to_aDai(aEURu_amount);
-        aEURu.burn(aEURu_amount);
+        //aEURu.burn(aEURu_amount);
+        aEURu.transfer(address(this), aEURu_amount);
         aDai.transfer(msg.sender, usd_amount_hedger);
     }
 
