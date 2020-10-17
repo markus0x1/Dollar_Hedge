@@ -39,10 +39,10 @@ contract MainContract is Ownable {
     }
 
     // exchange rate informations
-    int exchange_rate_t0;
-    int exchange_rate_t1;
-    int limit_exchange_rate_t1;
-    int limit_exchange_rate_t1r;
+    uint exchange_rate_t0;
+    uint exchange_rate_t1;
+    uint limit_exchange_rate_t1;
+    uint limit_exchange_rate_t1r;
 
     uint total_pool_balance_t0;
     uint total_pool_balance_t1;
@@ -72,14 +72,16 @@ contract MainContract is Ownable {
 
     function start_saving() public onlyOwner {
         round_is_over = true;
-        exchange_rate_t0 = getLatestPrice();
+        exchange_rate_t0 = uint(getLatestPrice());
     }
 
     function start_redeeming() public onlyOwner {
         saving_is_over = true;
-        exchange_rate_t1 = getLatestPrice();
-        limit_exchange_rate_t1 = min(max(exchange_rate_t1,exchange_rate_t0.mul(1)),exchange_rate_t0.mul(1));
-        limit_exchange_rate_t1r = max(min(exchange_rate_t1.mul(10**8).div(exchange_rate_t0),15*10**7),5*10**7);
+        exchange_rate_t1 = uint(getLatestPrice());
+        limit_exchange_rate_t1 = exchange_rate_t1;
+        limit_exchange_rate_t1r = exchange_rate_t1.mul(10**8).div(exchange_rate_t0);
+        //limit_exchange_rate_t1 = min(max(exchange_rate_t1,exchange_rate_t0.mul(1)),exchange_rate_t0.mul(1));
+        //limit_exchange_rate_t1r = max(min(exchange_rate_t1.mul(10**8).div(exchange_rate_t0),15*10**7),5*10**7);
         total_pool_balance_t1 = aDai.balanceOf(address(this));
         total_interest_payments = total_pool_balance_t1.sub(total_pool_balance_t0);
     }
@@ -174,6 +176,6 @@ contract MainContract is Ownable {
 
     function _aEURu_to_aDai(uint _amount) internal returns (uint256) {
         uint token_share = _amount.mul(10**18).div(total_pool_balance_t0);
-        return  _amount.mul(2*10**8.sub(limit_exchange_rate_t1r)) + token_share.mul(total_interest_payments).div(10**18);
+        return  _amount.mul(2*10**8).sub(limit_exchange_rate_t1r) + token_share.mul(total_interest_payments).div(10**18);
     }
 }
