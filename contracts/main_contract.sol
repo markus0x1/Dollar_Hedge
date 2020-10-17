@@ -2,13 +2,17 @@
 
 pragma solidity ^0.6.7;
 
+
+
 import "https://github.com/smartcontractkit/chainlink/blob/master/evm-contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.0.1/contracts/presets/ERC20PresetMinterPauser.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.0.1/contracts/access/Ownable.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.1.0/contracts/math/Math.sol";
 
 contract MainContract is Ownable {
 
     using SafeMath for uint256;
+    using Math for uint256;
 
     AggregatorV3Interface internal priceFeed;
     /**
@@ -36,22 +40,28 @@ contract MainContract is Ownable {
     }
 
     // exchange rate informations
-    int exchange_rate;
+    int exchange_rate_t0;
+    int exchange_rate_t1;
+    int limit_exchange_rate_t1;
+
+    uint total_pool_balance_t0;
+    uint total_pool_balance_t1;
+    uint total_interest_payments;
+
     address aEURs_address;
     address aEURu_address;
     address aDai_address;
 
+    bool round_is_over;
+    bool saving_is_over;
 
     // some random events
-    event ChangedExchangeRate (
-        int _old_rate,
-        int _new_rate
+    event SetExchangeRate (
+        int exchange_rate,
     );
 
     // mappings
-    mapping(address => uint) public principal_balances;
-    mapping(address => uint) public total_balance;
-    mapping(address => uint) public interest_balance;
+    mapping(address => uint) public pre_pool_balances;
 
 
     // aEURu and aEURu are both ERC20 tokens
@@ -59,28 +69,46 @@ contract MainContract is Ownable {
     ERC20PresetMinterPauser public aEURu;
     ERC20 public aDai;
 
-    function mint_tokens(uint aDai_amount) external {
-      bool redirected = is_not_redirected();
-      require(success, "Redirection of interest rates is not allowed");
 
-      _update_exchange_rate();
+    function start_saving() public onlyOwner {
+        round_is_over = true;
+        exchange_rate_t0 = _update_exchange_rate();
+    }
+
+    function start_redeeming() public onlyOwner {
+        saving_is_over = true;
+        exchange_rate_t1 = _update_exchange_rate();
+        limit_exchange_rate_t1 = min(max(exchange_rate_t1,0.5*exchange_rate_t0),1.5*exchange_rate_t0);
+        limit_exchange_rate_t1r = max(min(exchange_rate_t1.mul(10**8).div(exchange_rate_t0),15*10**7),5*10**7);
+        total_pool_balance_t1 = aDai.balanceOf(address(this));
+        total_interest_payments = total_pool_balance_t1.sub(total_pool_balance_t0);
+    }
+
+    function fund_pre_pool(uint aDai_amount) public {
+        bool success = aDai.transferFrom(msg.sender, address(this), aDai_amount);
+        require(success, "buy failed");
+        pre_pool_balances[msg.sender] = pre_pool_balances[msg.sender].add(aDai_amount);
+        total_pool_balance_t0 = total_pool_balance_t0.add(aDai_amount);
+    }
+
+    function mint_tokens() external {
+      require(round_is_over, "Can not mint before investment round ended")
+      uint aDai_amount = pre_pool_balances[msg.sender];
+      pre_pool_balances[msg.sender] = pre_pool_balances[msg.sender].sub(aDai_amount);
       _mint_euro_stable(aDai_amount.div(2));
       _mint_euro_unstable(aDai_amount.div(2));
     }
 
-    function end_redirection() external {
-      aDai.redirectInterestStream(0x0000000000000000000000000000000000000000);
-    }
-
     // redeem derivative tokens
     function redeem_euro_stable(uint aEURs_amount) external{
+        require(saving_is_over, "Saving period has not stopped yet");
         uint usd_amount_retail = aEURs_to_aDai(aEURs_amount);
         aEURs.burn(aEURs_amount);
         aDai.transfer(msg.sender, usd_amount_retail);
     }
 
-
     function redeem_euro_unstable(uint aEURu_amount) external{
+        require(saving_is_over, "Saving period has not stopped yet");
         uint usd_amount_hedger = aEURu_to_aDai(aEURu_amount);
         aEURu.burn(aEURu_amount);
         aDai.transfer(msg.sender, usd_amount_hedger);
@@ -121,17 +149,11 @@ contract MainContract is Ownable {
         return aDai_address;
     }
 
-    function _aEURu_to_aDai(uint _amount) internal returns (uint256) {
-        uint usd_amount_retail = _amount.mul(10**8).div(uint(exchange_rate));
-        return  _amount.mul(2).sub(usd_amount_retail);
-    }
-
     // change exchange rate information
     function _update_exchange_rate () internal {
         int  old_exchange_rate = exchange_rate;
         exchange_rate = getLatestPrice();
-        // to do: only update if exchange rate did change
-        emit ChangedExchangeRate (old_exchange_rate, exchange_rate);
+        emit SetExchangeRate (exchange_rate);
     }
 
     // redirect interest to contract
@@ -142,22 +164,25 @@ contract MainContract is Ownable {
     // mint derivative tokens
     function _mint_euro_stable(uint aDai_amount) internal{
         uint256 aEURs_amount = to_aEURs(aDai_amount);
-        bool success = aDai.transferFrom(msg.sender, address(this), aDai_amount);
-        require(success, "buy failed");
         aEURs.mint(msg.sender,aEURs_amount);
     }
     function _to_aEURs(uint _amount) internal returns (uint256) {
-        _update_exchange_rate();
-        return _amount.mul(10**8).div(uint(exchange_rate));
+        return _amount.mul(10**8).div(uint(exchange_rate_t0));
     }
 
     function _mint_euro_unstable(uint aDai_amount) internal{
-        bool success = aDai.transferFrom(msg.sender, address(this), aDai_amount);
-        require(success, "buy failed");
         aEURs.mint(msg.sender,aDai_amount);
     }
 
+    // redeem tokens
+
     function _aEURs_to_aDai(uint _amount) internal returns (uint256) {
-        return _amount.mul(10**8).div(uint(exchange_rate));
+        uint token_share = _amount.mul(exchange_rate_t0).mul(10**18).div(total_pool_balance_t0);
+        return  _amount.mul(10**8).div(uint(limit_exchange_rate_t1)) + token_share.mul(total_interest_payments).div(10**18);
+    }
+
+    function _aEURu_to_aDai(uint _amount) internal returns (uint256) {
+        uint token_share = _amount.mul(10**18).div(total_pool_balance_t0);
+        return  _amount.mul(2*10**8.sub(limit_exchange_rate_t1r)) + token_share.mul(total_interest_payments).div(10**18);
     }
 }
