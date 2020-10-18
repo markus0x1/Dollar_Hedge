@@ -69,6 +69,9 @@ contract MainContract is Ownable {
     ERC20PresetMinterPauser public aEURu;
     ERC20 public aDai;
 
+    function pre_pool_balance() public view returns (uint) {
+        return pre_pool_balances[msg.sender];
+    }
 
     function to_aEURs(uint _amount) public view returns (uint256) {
         return _amount.mul(10**8).div(uint(exchange_rate_start));
@@ -78,6 +81,7 @@ contract MainContract is Ownable {
         round_is_over = true;
         exchange_rate_start = uint(getLatestPrice());
     }
+
 
     function start_redeeming() public onlyOwner {
         saving_is_over = true;
@@ -121,6 +125,7 @@ contract MainContract is Ownable {
         uint usd_amount_retail = _aEURs_to_aDai(aEURs_amount);
         // aEURs.burn(aEURs_amount);
         aEURs.transfer(address(this), aEURs_amount);
+        //aEURs.transfer(0x0000000000000000000000000000000000000000, aEURs_amount);
         aDai.transfer(msg.sender, usd_amount_retail);
     }
 
@@ -129,10 +134,9 @@ contract MainContract is Ownable {
         uint usd_amount_hedger = _aEURu_to_aDai(aEURu_amount);
         //aEURu.burn(aEURu_amount);
         aEURu.transfer(address(this), aEURu_amount);
+        //aEURu.transfer(0x0000000000000000000000000000000000000000, aEURu_amount);
         aDai.transfer(msg.sender, usd_amount_hedger);
     }
-
-
 
 
     // utilities
@@ -175,12 +179,12 @@ contract MainContract is Ownable {
         uint256 aEURs_amount = _to_aEURs(aDai_amount);
         aEURs.mint(msg.sender,aEURs_amount);
     }
-    function _to_aEURs(uint _amount) public returns (uint256) {
+    function _to_aEURs(uint _amount) public view returns (uint256) {
         return _amount.mul(10**8).div(uint(exchange_rate_start));
     }
 
     function _mint_euro_unstable(uint aDai_amount) internal{
-        aEURs.mint(msg.sender,aDai_amount);
+        aEURu.mint(msg.sender,aDai_amount);
     }
 
     // redeem aEURs tokens
