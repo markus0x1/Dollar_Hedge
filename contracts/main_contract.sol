@@ -70,6 +70,9 @@ contract MainContract is Ownable {
     ERC20 public aDai;
 
 
+    function to_aEURs(uint _amount) public view returns (uint256) {
+        return _amount.mul(10**8).div(uint(exchange_rate_start));
+    }
 
     function start_saving() public onlyOwner {
         round_is_over = true;
@@ -79,12 +82,22 @@ contract MainContract is Ownable {
     function start_redeeming() public onlyOwner {
         saving_is_over = true;
         exchange_rate_end = uint(getLatestPrice());
-        limit_exchange_rate_end = exchange_rate_end;
-        limit_exchange_rate_endr = exchange_rate_end.mul(10**8).div(exchange_rate_start);
-        //limit_exchange_rate_end = min(max(exchange_rate_end,exchange_rate_start.mul(1)),exchange_rate_start.mul(1));
-        //limit_exchange_rate_endr = max(min(exchange_rate_end.mul(10**8).div(exchange_rate_start),15*10**7),5*10**7);
+        limit_exchange_rate_end = limit_exchange_movement();
+        limit_exchange_rate_endr = limit_exchange_movement_r();
         total_pool_balance_end = aDai.balanceOf(address(this));
         total_interest_payments = total_pool_balance_end.sub(total_pool_balance_start);
+    }
+
+    function limit_exchange_movement() public view returns (uint256) {
+        uint exchange_rt_min = exchange_rate_start.mul(5).div(10);
+        uint exchange_rt_max = exchange_rate_start.mul(15).div(10);
+        return exchange_rate_end.max(exchange_rt_min).min(exchange_rt_max);
+    }
+    function limit_exchange_movement_r() public view returns (uint256) {
+        uint ratio = exchange_rate_end.mul(10**9).div(exchange_rate_start);
+        ratio = ratio.max(5*10**8).min(15*10**8);
+        uint normalizer = 2*10**9;
+        return normalizer.sub(ratio).div(10);
     }
 
     function fund_pre_pool(uint aDai_amount) public {
@@ -170,25 +183,43 @@ contract MainContract is Ownable {
         aEURs.mint(msg.sender,aDai_amount);
     }
 
-    // redeem tokens
-
-    function _aEURs_to_aDai(uint _amount) public returns (uint256) {
-        uint token_share = _amount.mul(exchange_rate_start).mul(10**18).div(total_pool_balance_start);
-        return  _amount.mul(10**8).div(uint(limit_exchange_rate_end)) + token_share.mul(total_interest_payments).div(10**18);
+    // redeem aEURs tokens
+    function _aEURs_to_aDai(uint _amount) public view returns (uint256) {
+        uint interest_part = aEURs_interest(_amount);
+        uint principal_part = aEURs_to_dollar(_amount);
+        return  principal_part.add(interest_part);
+    }
+    function aEURs_interest(uint _amount) public view returns (uint256) {
+        return _amount.mul(exchange_rate_start).mul(total_interest_payments).div(total_pool_balance_start).div(10**8); //
+    }
+    function aEURs_to_dollar(uint _amount) public view returns (uint256) {
+        return _amount.mul(limit_exchange_rate_end).div(10**8);
     }
 
-    function _aEURu_to_aDai(uint _amount) public returns (uint256) {
-        uint token_share = _amount.mul(10**18).div(total_pool_balance_start);
-        return  _amount.mul(2*10**8).sub(limit_exchange_rate_endr) + token_share.mul(total_interest_payments).div(10**18);
+    // redeem aEURu tokens
+    function _aEURu_to_aDai(uint _amount) public view returns (uint256) {
+        uint interest_part = aEURu_interest(_amount);
+        uint principal_part = aEURu_to_dollar(_amount);
+        return  principal_part.add(interest_part);
+    }
+    function aEURu_interest(uint _amount) public view returns (uint256) {
+        return  _amount.mul(total_interest_payments).div(total_pool_balance_start);
+    }
+    function aEURu_to_dollar(uint _amount) public view returns (uint256) {
+        return _amount.mul(limit_exchange_rate_endr).div(10**8);
     }
 
-    function show_exchange_rates() public view returns (uint start_rate, uint end_rate) {
+    // other info
+    function show_exchange_rates() public view returns (uint start_rate, uint end_rate, uint limit_rate_one, uint limit_rate_two) {
         start_rate = exchange_rate_start;
         end_rate = exchange_rate_end;
+        limit_rate_one = limit_exchange_rate_end;
+        limit_rate_two = limit_exchange_rate_endr;
     }
 
-    function show_pool_balances() public view returns (uint start_pool, uint end_pool) {
+    function show_pool_balances() public view returns (uint start_pool, uint end_pool, uint  interest_pool) {
         start_pool =  total_pool_balance_start;
         end_pool =  total_pool_balance_end;
+        interest_pool = total_interest_payments;
     }
 }
