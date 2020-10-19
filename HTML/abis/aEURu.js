@@ -1,4 +1,4 @@
-{
+var aEURuAbi = [{
 	"compiler": {
 		"version": "0.6.12+commit.27d51765"
 	},
@@ -698,7 +698,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"browser/aEURu.sol": "aEUR"
+			"browser/aEURu.sol": "aEURu"
 		},
 		"evmVersion": "istanbul",
 		"libraries": {},
@@ -713,10 +713,11 @@
 	},
 	"sources": {
 		"browser/aEURu.sol": {
-			"keccak256": "0x35f792979ba1af5645a1cf2fb6b1f30420afee563f8c5571073db472cbef3927",
+			"keccak256": "0xdd2eb02a5b57fad181a9b0b94d5de2595c62d375fea3e827ee218d3e9b608bfa",
+			"license": "MIT",
 			"urls": [
-				"bzz-raw://7b97b6b18dde12b6bc17753c20fbd1a622311392fb0ba51747652bb2301dc075",
-				"dweb:/ipfs/QmSYMH9ojdnV9dKnSzBzLLDEtFzuLJB8FwEmcHUqibbAcV"
+				"bzz-raw://366cc29bbcbae02ac85b27f46bf716e76acda8351def8a2e5ffe8350ea87c5b5",
+				"dweb:/ipfs/QmPzaSZVMqR1Dc9X95NMByR3cF2gZiCa7bNBMG9g8RgEf6"
 			]
 		},
 		"https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.0.1/contracts/GSN/Context.sol": {
@@ -798,4 +799,4 @@
 		}
 	},
 	"version": 1
-}
+}];

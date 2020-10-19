@@ -15,14 +15,16 @@
 
     <script type="text/javascript" src="dist/web3.min.js"></script>
 
-    <script type="text/javascript" src="abis/aEuroS.js"></script>
+    <script type="text/javascript" src="abis/aEURs.js"></script>
+    <script type="text/javascript" src="abis/aEURu.js"></script>
     <script type="text/javascript" src="abis/aDai.js"></script>
+    <script type="text/javascript" src="abis/main_contract.js"></script>
 
     <script type="text/javascript">
-        var contract_adress = "";
-        var aEURs_adress = "";
-        var aEURu_adress = "";
-        var aDAI_adress = "";
+        var contract_adress = "0x19238F21deA6E1057B94449629D90b1080e767E4";
+        var aEURs_adress = "0x64666EBac41fC25EcA74A77dcf1E101cfc00a948";
+        var aEURu_adress = "0x9aaCb04ADf1811b02a4d8550F592E8c33FaC4B55";
+        var aDAI_adress = "0x58AD4cB396411B691A9AAb6F74545b2C5217FE6a";
 
         var aEURs_amount;
         var aEURu_amount;
@@ -30,6 +32,7 @@
         var prepool_amount;
         var prepool_investment_amount;
         
+        var current_adress;
 
         const ethEnabled = () => {
             if (window.ethereum) {
@@ -55,7 +58,7 @@
             
             //step 1
             AddADAIAllowanceButton = document.getElementById("aDAIAllowance");            
-            SaveADAIButton.addEventListener('click', () => {
+            AddADAIAllowanceButton.addEventListener('click', () => {
                 AddADAIAllowance()
             });
 
@@ -66,19 +69,37 @@
 
             //step 2
             MintButton = document.getElementById("MintTokens");            
-            SaveADAIButton.addEventListener('click', () => {
+            MintButton.addEventListener('click', () => {
                 AddADAIAllowance()
             });
 
             //step 4
-            AddTokensAllowanceButton = document.getElementById("MintTokens");            
-            SaveADAIButton.addEventListener('click', () => {
-                AddADAIAllowance()
+            AddAEURsAllowanceButton = document.getElementById("AddAEURsAllowance");            
+            AddAEURsAllowanceButton.addEventListener('click', () => {
+                AddAEURsAllowance();
             });
-            
+
+            AddAEURuAllowanceButton = document.getElementById("AddAEURuAllowance");            
+            AddAEURuAllowanceButton.addEventListener('click', () => {
+                AddAEURuAllowance();
+            });
+
+            AddAEURuAllowanceButton = document.getElementById("AddAEURuAllowance");            
+            AddAEURuAllowanceButton.addEventListener('click', () => {
+                AddAEURuAllowance();
+            });
+
+            RedeemAEURsIButton = document.getElementById("RedeemAEURs");            
+            RedeemAEURsIButton.addEventListener('click', () => {
+                RedeemAEURs();
+            });
+
+            RedeemAEURuButton = document.getElementById("RedeemAEURu");            
+            RedeemAEURuButton.addEventListener('click', () => {
+                RedeemAEURu();
+            });
 
         };
-
 
         async function getAccount() {
 
@@ -90,8 +111,9 @@
             if (!ethEnabled()) {
                 alert("Please install an Ethereum-compatible browser or extension like MetaMask to use this dApp!");
             } else {
-                window.web3.eth.getAccounts(console.log);
-                getADai();
+                (window.web3.eth.getAccounts()).then(function(result) {
+                current_adress = result[0];
+                });                
             }
         }
 
@@ -158,9 +180,15 @@
         }
 
         async function AddADAIAllowance() {
-            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
-            (window.web3.eth.getAccounts()).then(function(result) {             
+            var MyContract = new web3.eth.Contract(aDaiAbi, aDAI_adress);
+            
+            MyContract.methods.increaseAllowance(contract_adress, 500).call()
+                    .then(function(result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
 
+                        console.log(shifted);
+                        //document.getElementById("Monee").innerHTML = "coins: " + shifted;
             });
 
         }
@@ -168,58 +196,83 @@
 
 
         async function DepositADAI() {
-            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
-            (window.web3.eth.getAccounts()).then(function(result) {             
+            var MyContract = new web3.eth.Contract(mainContractAbi, contract_adress);
+            
+            MyContract.methods.fund_pre_pool(500).call()
+                    .then(function(result) {
+                        /*var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
 
+                        console.log(shifted);*/
+                        //document.getElementById("Monee").innerHTML = "coins: " + shifted;
             });
-        }
-
-
-        async function DepositADAI() {
-            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
-            (window.web3.eth.getAccounts()).then(function(result) {             
-
-            });
-
-        }
+        }      
 
         async function ClaimTokens() {
-            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
-            (window.web3.eth.getAccounts()).then(function(result) {             
+            var MyContract = new web3.eth.Contract(mainContractAbi, contract_adress);
+            MyContract.methods.mint_tokens().call()
+                    .then(function(result) {
+                        /*var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
 
-            });
-
-        }
-
-
-        async function AddAEuroAllowance() {
-            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
-            (window.web3.eth.getAccounts()).then(function(result) {             
-
+                        console.log(shifted);*/
+                        //document.getElementById("Monee").innerHTML = "coins: " + shifted;
             });
 
         }
 
         async function AddAEURsAllowance() {
-            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
-            (window.web3.eth.getAccounts()).then(function(result) {             
+            var MyContract = new web3.eth.Contract(aEURsAbi, aEURs_adress);
+            
+            MyContract.methods.increaseAllowance(contract_adress, 500).call()
+                    .then(function(result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
 
+                        console.log(shifted);
+                        //document.getElementById("Monee").innerHTML = "coins: " + shifted;
             });
         }
 
         async function AddAEURuAllowance() {
-            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
-            (window.web3.eth.getAccounts()).then(function(result) {             
+            var MyContract = new web3.eth.Contract(aEURuAbi, aEURu_adress);
+            
+            MyContract.methods.increaseAllowance(contract_adress, 500).call()
+                    .then(function(result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
 
+                        console.log(shifted);
+                        //document.getElementById("Monee").innerHTML = "coins: " + shifted;
             });
         }
 
-        async function Redeem() {
-            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
-            (window.web3.eth.getAccounts()).then(function(result) {             
+        async function RedeemAEURu() {
+            var MyContract = new web3.eth.Contract(mainContractAbi, contract_adress);
+            MyContract.methods.redeem_euro_stable(500).call()
+                    .then(function(result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
 
+                        console.log(shifted);
+                        //document.getElementById("Monee").innerHTML = "coins: " + shifted;
+            });
+
+        }
+
+        async function RedeemAEURs() {
+            var MyContract = new web3.eth.Contract(mainContractAbi, contract_adress);
+            MyContract.methods.redeem_euro_unstable(500).call()
+                    .then(function(result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
+
+                        console.log(shifted);
+                        //document.getElementById("Monee").innerHTML = "coins: " + shifted;
             });
         }
+
+
     </script>
 
 
@@ -257,10 +310,7 @@
 <body>
   
   <header>
-      
-    
-   
-     
+                  
       <ul id="nav-mobile" class="sidenav sidenav-fixed" style="transform: translateX(0%);">
         <li>
             Cortex Hedge
@@ -271,18 +321,14 @@
         <li>
             <button id="aDai in Wallet" class="waves-effect waves-light btn">aDAI you could invest</button>
         </li>
-        <li>
-            <button id="" class="waves-effect waves-light btn">Mint aEURs and aEURu</button>
-        </li>    
+    
         <li>
             <button id="aEURuDisplay" class="waves-effect waves-light btn">aEURu</button>
         </li>
         <li>
             <button id="aEURsDisplay" class="waves-effect waves-light btn">aEURs</button>
         </li>       
-        <li>
-            <button id="Redeem" class="waves-effect waves-light btn">Redeem</button>
-        </li>         
+            
        
     </ul>
    
@@ -340,9 +386,10 @@
                 <a href="https://kovan.balancer.exchange/#/swap">Trade your shares :)</a>
             </div>
             <div id="test4" class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <button id="AddAEURsAllowance" class="waves-effect waves-light btn">Add Allowance</button> <br>           
-                <button id="AddAEURuAllowance" class="waves-effect waves-light btn">Add Allowance</button> <br>           
-                <button id="Redeem" class="waves-effect waves-light btn">Redeem aDAI</button>          
+                <button id="AddAEURsAllowance" class="waves-effect waves-light btn">Add aEURs Allowance</button> <br>           
+                <button id="AddAEURuAllowance" class="waves-effect waves-light btn">Add aEURu Allowance</button> <br>
+                <button id="RedeemAEURs" class="waves-effect waves-light btn">Redeem aEURs</button>    
+                <button id="RedeemAEURu" class="waves-effect waves-light btn">Redeem aEURu</button>          
             </div>
                 
             </div>

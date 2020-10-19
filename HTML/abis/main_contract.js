@@ -1,4 +1,4 @@
-{
+var mainContractAbi = [{
 	"compiler": {
 		"version": "0.6.12+commit.27d51765"
 	},
@@ -688,4 +688,4 @@
 		}
 	},
 	"version": 1
-}
+}];
