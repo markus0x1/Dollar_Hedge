@@ -19,6 +19,18 @@
     <script type="text/javascript" src="abis/aDai.js"></script>
 
     <script type="text/javascript">
+        var contract_adress = "";
+        var aEURs_adress = "";
+        var aEURu_adress = "";
+        var aDAI_adress = "";
+
+        var aEURs_amount;
+        var aEURu_amount;
+        var aDAI_amount;
+        var prepool_amount;
+        var prepool_investment_amount;
+        
+
         const ethEnabled = () => {
             if (window.ethereum) {
                 window.web3 = new Web3(window.ethereum);
@@ -32,16 +44,39 @@
         var address = "";
         window.onload = function() {
             ethereumButton = document.getElementById("enableEthereumButton");
-            contractButton = document.getElementById("Contract");
+            
 
             ethereumButton.addEventListener('click', () => {
                 getAccount();
 
             });
 
-            contractButton.addEventListener('click', () => {
-                getAEURO();
+            
+            
+            //step 1
+            AddADAIAllowanceButton = document.getElementById("aDAIAllowance");            
+            SaveADAIButton.addEventListener('click', () => {
+                AddADAIAllowance()
             });
+
+            SaveADAIButton = document.getElementById("DepositADAI");
+            SaveADAIButton.addEventListener('click', () => {
+                DepositADAI();
+            });
+
+            //step 2
+            MintButton = document.getElementById("MintTokens");            
+            SaveADAIButton.addEventListener('click', () => {
+                AddADAIAllowance()
+            });
+
+            //step 4
+            AddTokensAllowanceButton = document.getElementById("MintTokens");            
+            SaveADAIButton.addEventListener('click', () => {
+                AddADAIAllowance()
+            });
+            
+
         };
 
 
@@ -121,6 +156,70 @@
             });
 
         }
+
+        async function AddADAIAllowance() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+
+        }
+
+
+
+        async function DepositADAI() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+        }
+
+
+        async function DepositADAI() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+
+        }
+
+        async function ClaimTokens() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+
+        }
+
+
+        async function AddAEuroAllowance() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+
+        }
+
+        async function AddAEURsAllowance() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+        }
+
+        async function AddAEURuAllowance() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+        }
+
+        async function Redeem() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+        }
     </script>
 
 
@@ -137,6 +236,16 @@
 
     .sidebar {
         
+    }
+
+    #loginOverlay {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-image: url(img/overlay_bg.png);
+        z-index: 1;
     }
 
     </style>
@@ -157,10 +266,13 @@
             Cortex Hedge
         </li>
         <li>
+            <button id="enableEthereumButton" class="waves-effect waves-light btn">Enable Wallet</button>
+        </li>        
+        <li>
             <button id="aDai in Wallet" class="waves-effect waves-light btn">aDAI you could invest</button>
         </li>
         <li>
-            <button id="Contract" class="waves-effect waves-light btn">Mint aEURs and aEURu</button>
+            <button id="" class="waves-effect waves-light btn">Mint aEURs and aEURu</button>
         </li>    
         <li>
             <button id="aEURuDisplay" class="waves-effect waves-light btn">aEURu</button>
@@ -179,20 +291,7 @@
     <div class="container">
         
         <div class="row">
-            <a href="#" data-target="nav-mobile" class="top-nav sidenav-trigger full hide-on-large-only"><i class="material-icons">menu</i></a>   
-
-            <div class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <div id="MarketSize">Pool: 0</div>
-            </div>
-
-            <div class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <div id="MarketSize">Available aEURs</div>
-                <div class="progress">
-                    <div class="determinate" style="width: 70%"></div>
-                </div>
-            </div>
-
-
+            <a href="#" data-target="nav-mobile" class="top-nav sidenav-trigger full hide-on-large-only"><i class="material-icons">menu</i></a>           
         </div>
 
 
@@ -204,7 +303,7 @@
                 <div id="MarketSize">Pool: 0</div>
             </div>
             <div class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <div id="aDai"> Pool Growth since prepool closed</div>
+                <div id="aDai"> Pool Growth since prepool closed: </div>
             </div>
 
             <div class="col s12 m8 offset-m1 xl7 offset-xl1">
@@ -212,21 +311,11 @@
             </div>
 
             <div class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <div id="MarketSize">Pool: 0</div>
-            
-
-            <button id="enableEthereumButton" class="waves-effect waves-light btn">Enable Wallet</button>
-            
-
-     
-          
-          
-                                       
-              
+                <div id="MarketSize">Pool: 0</div>                       
+                                                                                          
             <br>
             </div>
-
-            <span id="Monee">coins: 0</span>
+            
         </div>
 
         <div class="row">
@@ -241,24 +330,28 @@
 
             </div>
             <div id="test1" class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <button id="Add allowance aDAI" class="waves-effect waves-light btn">Add Allowance</button>    <br>
-                <button class="waves-effect waves-light btn">deposit aDai</button>       
+                <button id="aDAIAllowance" class="waves-effect waves-light btn">Add Allowance</button>    <br>
+                <button id="DepositADAI" class="waves-effect waves-light btn">deposit aDai</button>
             </div>
             <div id="test2" class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <button class="waves-effect waves-light btn">Mint Fortunate Euro Coin</button>                 
+                <button id="MintTokens" class="waves-effect waves-light btn">Mint Fortunate Euro Coin</button>                 
             </div>
             <div id="test3" class="col s12 m8 offset-m1 xl7 offset-xl1">
                 <a href="https://kovan.balancer.exchange/#/swap">Trade your shares :)</a>
             </div>
             <div id="test4" class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <button id="Add allowance" class="waves-effect waves-light btn">Add Allowance</button>            
-                <button id="Redeem" class="waves-effect waves-light btn">Redeem aDAI</button>                                      
+                <button id="AddAEURsAllowance" class="waves-effect waves-light btn">Add Allowance</button> <br>           
+                <button id="AddAEURuAllowance" class="waves-effect waves-light btn">Add Allowance</button> <br>           
+                <button id="Redeem" class="waves-effect waves-light btn">Redeem aDAI</button>          
             </div>
+                
             </div>
          </div>
          
         </div>
     </div>
+
+
 
 
 
