@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script type="text/javascript" src="dist/web3.min.js"></script>
+
+    <script type="text/javascript" src="abis/aEuroS.js"></script>
+    <script type="text/javascript" src="abis/aDai.js"></script>
+
+    <script type="text/javascript">
+        var contract_adress = "";
+        var aEURs_adress = "";
+        var aEURu_adress = "";
+        var aDAI_adress = "";
+
+        var aEURs_amount;
+        var aEURu_amount;
+        var aDAI_amount;
+        var prepool_amount;
+        var prepool_investment_amount;
+        
+
+        const ethEnabled = () => {
+            if (window.ethereum) {
+                window.web3 = new Web3(window.ethereum);
+                window.ethereum.enable();
+                return true;
+            }
+            return false;
+        }
+
+        var ethereumButton;
+        var address = "";
+        window.onload = function() {
+            ethereumButton = document.getElementById("enableEthereumButton");
+            
+
+            ethereumButton.addEventListener('click', () => {
+                getAccount();
+
+            });
+
+            
+            
+            //step 1
+            AddADAIAllowanceButton = document.getElementById("aDAIAllowance");            
+            SaveADAIButton.addEventListener('click', () => {
+                AddADAIAllowance()
+            });
+
+            SaveADAIButton = document.getElementById("DepositADAI");
+            SaveADAIButton.addEventListener('click', () => {
+                DepositADAI();
+            });
+
+            //step 2
+            MintButton = document.getElementById("MintTokens");            
+            SaveADAIButton.addEventListener('click', () => {
+                AddADAIAllowance()
+            });
+
+            //step 4
+            AddTokensAllowanceButton = document.getElementById("MintTokens");            
+            SaveADAIButton.addEventListener('click', () => {
+                AddADAIAllowance()
+            });
+            
+
+        };
+
+
+        async function getAccount() {
+
+            //Will Start the metamask extension            
+            await window.ethereum.request({
+                method: 'eth_requestAccounts'
+            });
+
+            if (!ethEnabled()) {
+                alert("Please install an Ethereum-compatible browser or extension like MetaMask to use this dApp!");
+            } else {
+                window.web3.eth.getAccounts(console.log);
+                getADai();
+            }
+        }
+
+        async function getAEURO() {
+            var MyContract = new web3.eth.Contract(abi, '0x284357BEA8cAEE783Cf727Ff27128d4446f1EEC3');
+            (window.web3.eth.getAccounts()).then(function(result) {
+
+                MyContract.methods.balanceOf(result[0]).call()
+                    .then(function(result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
+
+                        console.log(shifted);
+                        document.getElementById("Monee").innerHTML = "coins: " + shifted;
+                    });
+
+
+
+                MyContract.methods.totalSupply().call()
+                    .then(function(result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
+
+                        console.log(shifted);
+                        document.getElementById("MarketSize").innerHTML = "Pool: " + shifted;
+                    });
+
+            });
+        }
+
+
+        async function Addallowance() {
+            var MyContract = new web3.eth.Contract(abi, '0x284357BEA8cAEE783Cf727Ff27128d4446f1EEC3');
+            (window.web3.eth.getAccounts()).then(function(result) {
+
+                MyContract.methods.increaseAllowance(result[0], 500).call()
+                    .then(function(result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
+
+                        console.log(shifted);
+                        //document.getElementById("Monee").innerHTML = "coins: " + shifted;
+                    });
+
+            });
+        }
+
+
+        async function getADai() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {
+
+                MyContract.methods.balanceOf(result[0]).call()
+                    .then(function(result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
+
+                        console.log(shifted);
+                        document.getElementById("aDai").innerHTML = "your aDai: " + shifted;
+                    });
+
+            });
+
+        }
+
+        async function AddADAIAllowance() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+
+        }
+
+
+
+        async function DepositADAI() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+        }
+
+
+        async function DepositADAI() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+
+        }
+
+        async function ClaimTokens() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+
+        }
+
+
+        async function AddAEuroAllowance() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+
+        }
+
+        async function AddAEURsAllowance() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+        }
+
+        async function AddAEURuAllowance() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+        }
+
+        async function Redeem() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
+            (window.web3.eth.getAccounts()).then(function(result) {             
+
+            });
+        }
+    </script>
+
+
+    <style>
+    body {background-image: linear-gradient(90deg, rgb(0, 0, 0) 0%, rgb(255, 255, 255) 0%, rgb(59, 161, 116) 100%, rgb(0, 212, 255) 100%);}
+    h1   {color: blue;}
+    p    {color: red;}
+
+
+    .topbar{
+        position: fixed;
+        width: 100%;
+    }
+
+    .sidebar {
+        
+    }
+
+    #loginOverlay {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-image: url(img/overlay_bg.png);
+        z-index: 1;
+    }
+
+    </style>
+
+   
+
+</head>
+
+<body>
+  
+  <header>
+      
+    
+   
+     
+      <ul id="nav-mobile" class="sidenav sidenav-fixed" style="transform: translateX(0%);">
+        <li>
+            Cortex Hedge
+        </li>
+        <li>
+            <button id="enableEthereumButton" class="waves-effect waves-light btn">Enable Wallet</button>
+        </li>        
+        <li>
+            <button id="aDai in Wallet" class="waves-effect waves-light btn">aDAI you could invest</button>
+        </li>
+        <li>
+            <button id="" class="waves-effect waves-light btn">Mint aEURs and aEURu</button>
+        </li>    
+        <li>
+            <button id="aEURuDisplay" class="waves-effect waves-light btn">aEURu</button>
+        </li>
+        <li>
+            <button id="aEURsDisplay" class="waves-effect waves-light btn">aEURs</button>
+        </li>       
+        <li>
+            <button id="Redeem" class="waves-effect waves-light btn">Redeem</button>
+        </li>         
+       
+    </ul>
+   
+    </header>
+        
+    <div class="container">
+        
+        <div class="row">
+            <a href="#" data-target="nav-mobile" class="top-nav sidenav-trigger full hide-on-large-only"><i class="material-icons">menu</i></a>           
+        </div>
+
+
+        <div class="row">
+            <!-- Page Content goes here -->
+
+
+            <div class="col s12 m8 offset-m1 xl7 offset-xl1">
+                <div id="MarketSize">Pool: 0</div>
+            </div>
+            <div class="col s12 m8 offset-m1 xl7 offset-xl1">
+                <div id="aDai"> Pool Growth since prepool closed: </div>
+            </div>
+
+            <div class="col s12 m8 offset-m1 xl7 offset-xl1">
+                <div id="aDaiSupplied">Your share of it: </div>
+            </div>
+
+            <div class="col s12 m8 offset-m1 xl7 offset-xl1">
+                <div id="MarketSize">Pool: 0</div>                       
+                                                                                          
+            <br>
+            </div>
+            
+        </div>
+
+        <div class="row">
+            <div class="col s12 m8 offset-m1 xl7 offset-xl1">
+         
+            <ul class="tabs">
+                <li class="tab col s3"><a href="#test1">Invest</a></li>
+                <li class="tab col s3"><a class="active" href="#test2">Claim Tokens</a></li>
+                <li class="tab col s3 "><a href="#test3">Exchange your tokens</a></li>
+                <li class="tab col s3"><a href="#test4">Redeem aDAI</a></li>
+            </ul>
+
+            </div>
+            <div id="test1" class="col s12 m8 offset-m1 xl7 offset-xl1">
+                <button id="aDAIAllowance" class="waves-effect waves-light btn">Add Allowance</button>    <br>
+                <button id="DepositADAI" class="waves-effect waves-light btn">deposit aDai</button>
+            </div>
+            <div id="test2" class="col s12 m8 offset-m1 xl7 offset-xl1">
+                <button id="MintTokens" class="waves-effect waves-light btn">Mint Fortunate Euro Coin</button>                 
+            </div>
+            <div id="test3" class="col s12 m8 offset-m1 xl7 offset-xl1">
+                <a href="https://kovan.balancer.exchange/#/swap">Trade your shares :)</a>
+            </div>
+            <div id="test4" class="col s12 m8 offset-m1 xl7 offset-xl1">
+                <button id="AddAEURsAllowance" class="waves-effect waves-light btn">Add Allowance</button> <br>           
+                <button id="AddAEURuAllowance" class="waves-effect waves-light btn">Add Allowance</button> <br>           
+                <button id="Redeem" class="waves-effect waves-light btn">Redeem aDAI</button>          
+            </div>
+                
+            </div>
+         </div>
+         
+        </div>
+    </div>
+
+
+
+
+
+    <!--JavaScript at end of body for optimized loading-->
+    <script type="text/javascript" src="js/materialize.min.js"></script>
+
+     <script type="text/javascript">
+       document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll('.sidenav');
+            var instances = M.Sidenav.init(elems);
+            var tabs = document.querySelectorAll('.tabs');
+            
+            var instance = M.Tabs.init(tabs);
+        });
+
+
+    </script>
+</body>
+
+</html>
