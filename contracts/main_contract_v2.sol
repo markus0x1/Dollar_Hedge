@@ -3,7 +3,7 @@
 pragma solidity ^0.6.7;
 
 
-
+// add some events to contract
 import "https://github.com/smartcontractkit/chainlink/blob/master/evm-contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.0.1/contracts/presets/ERC20PresetMinterPauser.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.0.1/contracts/access/Ownable.sol";
@@ -18,11 +18,11 @@ contract MainContract is Ownable {
     AggregatorV3Interface internal priceFeed_dai_usd;
     /**
      * Network: Kovan
-     * Aggregator: 
+     * Aggregator:
      * - EUR/USD,  Address: 0x0c15Ab9A0DB086e062194c273CC79f41597Bbf13
      * - DAI/USD,  Address:	0x777A68032a88E5A84678A77Af2CD65A7b3c0775a
-     * 
-     * 
+     *
+     *
      */
     constructor() public {
         priceFeed_eur_usd = AggregatorV3Interface(0x0c15Ab9A0DB086e062194c273CC79f41597Bbf13);
@@ -92,12 +92,12 @@ contract MainContract is Ownable {
     }
 
     function start_saving() public onlyOwner {
-        round_is_over = true;
+        //round_is_over = true;
         exchange_rate_start = uint(getLatestPrice_EUR());
     }
-    
+
     function start_redeeming() public onlyOwner {
-        saving_is_over = true;
+        // saving_is_over = true;
         exchange_rate_end = uint(getLatestPrice_EUR());
         total_pool_balance_end = aDai.balanceOf(address(this));
     }
@@ -111,7 +111,7 @@ contract MainContract is Ownable {
     }
 
     function mint_tokens() external {
-      require(round_is_over, "Can not mint before investment round ended");
+      // require(round_is_over, "Can not mint before investment round ended");
       uint aDai_amount = pre_pool_balances[msg.sender];
       pre_pool_balances[msg.sender] = pre_pool_balances[msg.sender].sub(aDai_amount);
       _mint_euro_stable(aDai_amount.div(2));
@@ -179,17 +179,17 @@ contract MainContract is Ownable {
     function get_aEURu_to_EUR(address _address) public view returns (uint256) {
         return _Dai_to_EUR(get_aEURu_to_Dai(_address));
     }
-    
+
     // redeem derivative tokens
     function redeem_euro_stable(uint aEURs_amount) external{
-        require(saving_is_over, "Saving period has not stopped yet");
+        // require(saving_is_over, "Saving period has not stopped yet");
         uint usd_amount_retail = aEURs_to_aDai(aEURs_amount, exchange_rate_end);
         aEURs.burnFrom(msg.sender, aEURs_amount);
         aDai.transfer(msg.sender, usd_amount_retail);
     }
 
     function redeem_euro_unstable(uint aEURu_amount) external{
-        require(saving_is_over, "Saving period has not stopped yet");
+        // require(saving_is_over, "Saving period has not stopped yet");
         uint usd_amount_hedger = aEURu_to_aDai(aEURu_amount, exchange_rate_end);
         aEURu.burnFrom(msg.sender, aEURu_amount);
         aDai.transfer(msg.sender, usd_amount_hedger);
@@ -221,8 +221,8 @@ contract MainContract is Ownable {
     function aEURu_to_dollar(uint _amount, uint _exchange_rate) internal view returns (uint256) {
         return _amount.mul(limit_exchange_movement_short(_exchange_rate)).div(10**8);
     }
-    
-    // exchange rate conversion helper 
+
+    // exchange rate conversion helper
     function _Dai_to_EUR(uint _amount) internal view returns (uint256) {
         return _amount.mul(uint(getLatestPrice_EUR())).div(uint(getLatestPrice_Dai()));
     }
@@ -252,12 +252,12 @@ contract MainContract is Ownable {
         _total_pool_balance_start =  total_pool_balance_start;
         _total_pool_balance_end =  total_pool_balance_end;
     }
-    
+
     function is_saving_over() public view returns (bool) {
             return saving_is_over;
     }
     function is_round_over() public view returns (bool) {
             return round_is_over;
     }
-    
+
 }
