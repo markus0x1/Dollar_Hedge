@@ -58,6 +58,25 @@
             });
 
 
+            //view Sidebar
+            //step 1
+            ViewAdaiButton = document.getElementById("aDaiInWallet");
+            ViewAdaiButton.addEventListener('click', () => {
+                 getADai();                
+            });
+            
+            aEURUDisplayButton = document.getElementById("aEURuDisplay");
+            aEURUDisplayButton.addEventListener('click', () => {
+                 getAEURu();                
+            });
+            
+            aEURSDisplayButton = document.getElementById("aEURsDisplay");
+            aEURSDisplayButton.addEventListener('click', () => {
+                getAEURs();
+            });
+
+
+
 
             //step 1
             AddADAIAllowanceButton = document.getElementById("aDAIAllowance");
@@ -111,6 +130,7 @@
             if (!ethEnabled()) {
                 alert("Please install an Ethereum-compatible browser or extension like MetaMask to use this dApp!");
             } else {
+                
                 (window.web3.eth.getAccounts()).then(function (result) {
                     current_adress = result[0];
                 });
@@ -183,16 +203,72 @@
 
 
 
+        async function getADai() {
+            var MyContract = new web3.eth.Contract(aDaiAbi, aDAI_adress);
+            
+                MyContract.methods.balanceOf(current_adress).call()
+                    .then(function (result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
+
+                        console.log(shifted);
+                        document.getElementById("aDaiInWallet").innerHTML = "your aDai: " + shifted;    
+                        aDAI_amount = raw;
+            });
+
+        }
+
+
+
+        async function getAEURs() {
+            var MyContract = new web3.eth.Contract(aEURsAbi, aEURs_adress);
+            
+                MyContract.methods.balanceOf(current_adress).call()
+                    .then(function (result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
+
+                        console.log(shifted);
+                        document.getElementById("aEURsDisplay").innerHTML = "your aEURs: " + shifted;            
+                        aEURs_amount = raw;
+            });
+
+        }
+
+
+        async function getAEURu() {
+            var MyContract = new web3.eth.Contract(aEURuAbi, aEURu_adress);
+            
+                MyContract.methods.balanceOf(current_adress).call()
+                    .then(function (result) {
+                        var raw = result;
+                        var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
+
+                        console.log(shifted);
+                        document.getElementById("aEURuDisplay").innerHTML = "your aEURu: " + shifted;            
+                        aEURu_amount = raw;
+            });
+
+        }
+
+
+
+
+
+
+
+
+
+
+
         async function AddADAIAllowance() {            
             var MyContract = new window.web3.eth.Contract(aDaiAbi, aDAI_adress);
+            var adaiamounttofund = document.getElementById("aDAI_amount_to_fund").value;      
 
-            MyContract.methods.increaseAllowance(contract_adress, 500).send({from:current_adress})
+            MyContract.methods.increaseAllowance(contract_adress,window.web3.utils.toWei(adaiamounttofund) ).send({from:current_adress})
                 .then(function (result) {
-                    
-                    /*var raw = result;
-                    var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
 
-                    console.log(shifted);*/
+                    console.log(result);
                     
                     //document.getElementById("Monee").innerHTML = "coins: " + shifted;
                 });
@@ -203,8 +279,8 @@
 
         async function DepositADAI() {
             var MyContract = new window.web3.eth.Contract(mainContractAbi, contract_adress);
-
-            MyContract.methods.fund_pre_pool(500).send({from:current_adress})
+            var adaiamounttofund = document.getElementById("aDAI_amount_to_fund").value;  
+            MyContract.methods.fund_pre_pool(window.web3.utils.toWei(adaiamounttofund)).send({from:current_adress})
                 .then(function (result) {
                     /*var raw = result;
                     var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
@@ -231,7 +307,7 @@
         async function AddAEURsAllowance() {
             var MyContract = new window.web3.eth.Contract(aEURsAbi, aEURs_adress);
 
-            MyContract.methods.increaseAllowance(contract_adress, 500).send({from:current_adress})
+            MyContract.methods.increaseAllowance(contract_adress, aEURs_amount).send({from:current_adress})
                 .then(function (result) {
                     var raw = result;
                     var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
@@ -244,7 +320,7 @@
         async function AddAEURuAllowance() {
             var MyContract = new window.web3.eth.Contract(aEURuAbi, aEURu_adress);
 
-            MyContract.methods.increaseAllowance(contract_adress, 500).send({from:current_adress})
+            MyContract.methods.increaseAllowance(contract_adress, aEURu_amount).send({from:current_adress})
                 .then(function (result) {
                     var raw = result;
                     var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
@@ -256,8 +332,8 @@
 
         async function RedeemAEURu() {
             var MyContract = new window.web3.eth.Contract(mainContractAbi, contract_adress);
-
-            MyContract.methods.redeem_euro_stable(500).send({from:current_adress})
+            
+            MyContract.methods.redeem_euro_stable(aEURu_amount).send({from:current_adress})
                 .then(function () {
                    /* var raw = result;
                     var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
@@ -270,8 +346,8 @@
 
         async function RedeemAEURs() {
             var MyContract = new window.web3.eth.Contract(mainContractAbi, contract_adress);
-
-            MyContract.methods.redeem_euro_unstable(500).send({from:current_adress})
+            
+            MyContract.methods.redeem_euro_unstable(aEURs_amount).send({from:current_adress})
                 .then(function () {
                     /*var raw = result;
                     var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
@@ -333,7 +409,7 @@
                 <button id="enableEthereumButton" class="waves-effect waves-light btn">Enable Wallet</button>
             </li>
             <li>
-                <button id="aDai in Wallet" class="waves-effect waves-light btn">aDAI you could invest</button>
+                <button id="aDaiInWallet" class="waves-effect waves-light btn">aDAI you could invest</button>
             </li>
 
             <li>
@@ -368,14 +444,8 @@
             </div>
 
             <div class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <div id="aDaiSupplied">Your share of it: </div>
-            </div>
-
-            <div class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <div id="MarketSize">Pool: 0</div>
-
-                <br>
-            </div>
+                <div id="aDaiSupplied">You did deposit: </div>
+            </div>      
 
         </div>
 
@@ -390,7 +460,11 @@
                 </ul>
 
             </div>
-            <div id="test1" class="col s12 m8 offset-m1 xl7 offset-xl1">
+            <div id="test1" class="col s12 m8 offset-m1 xl7 offset-xl1">              
+                <div class="input-field ">
+                    <input id="aDAI_amount_to_fund" type="number" class="validate">
+                    <label for="aDAI_amount_to_fund">aDAI amount</label>
+                </div>
                 <button id="aDAIAllowance" class="waves-effect waves-light btn">Add Allowance</button> <br>
                 <button id="DepositADAI" class="waves-effect waves-light btn">deposit aDai</button>
             </div>
@@ -399,8 +473,9 @@
             </div>
             <div id="test3" class="col s12 m8 offset-m1 xl7 offset-xl1">
                 <a href="https://kovan.balancer.exchange/#/swap">Trade your shares :)</a>
+                <iframe src="https://app.uniswap.org/#/swap" width="100%" height="500" style=" left: 50%; width:100%;height:500;max-width:515px;" frameborder="0" scrolling="no"></iframe>
             </div>
-            <div id="test4" class="col s12 m8 offset-m1 xl7 offset-xl1">
+            <div id="test4" class="col s12 m8 offset-m1 xl7 offset-xl1">                
                 <button id="AddAEURsAllowance" class="waves-effect waves-light btn">Add aEURs Allowance</button> <br>
                 <button id="AddAEURuAllowance" class="waves-effect waves-light btn">Add aEURu Allowance</button> <br>
                 <button id="RedeemAEURs" class="waves-effect waves-light btn">Redeem aEURs</button>
