@@ -17,21 +17,23 @@ As a first step, the stable coin will be lent through a lending protocol such as
 The next step is for the user to wrap the interest-bearing stable coin in our contract. We leverage the Aave protocoll to produce interest on the deposits.
 Our contract works as a platform to connect two types of market participants. Retail investors buy in to receive interest on their deposits while insuring their deposits against exchange rate movements. More specific: They always receive their initital deposit back *in EURO*. Hedgers provide their capital to the pool. They benefit from exchange rate movements and pay retail investors out if the EURO appreciates in value. They can demand a fee to Retail investors for this service. 
 
-## Technical technical
-Our systems has 3 main phases where actors can interact with the contract. 
-1) In the waiting period Hedgers deposit aDai to the contract. 
-After some time the contract can be called up to start the savings period. 
-1)->2). In the call we calculate the initial amount of capital Capital<sub>*init*</sub> and call an price oracle to get the initital exchange rate &epsilon;<sub>*init*</sub> = &euro;/&#36; 
+## Technical description
+Our system has 3 main phases in which the actors can interact with the contract. 
+1) In the waiting period, Hedgers deposit aDai in the contract. 
+After some time the contract can be called to start the savings period. 
+1)->2). In the request we calculate the initial capital amount capital<sub>*init*</sub> and call a price oracle to get the initial exchange rate &epsilon;<sub>*init*</sub> = &euro;/&#36; 
 
-2) In the savings period the Hedgers claim two tokens against their deposits. For 2 aDai they receive 1 aEURu + 1/&epsilon;<sub>*init*</sub> aEURs
-aEURu. aEURu and aEURs are ERC20 tokens they can freely trade around. For example they migth hold on to aEURu and sell their aEURs tokens to an retail investor.
-After some time the contract is called to start the redeemation period 1)->2 We calculate the total interest payments claimed in the period as Capital<sub>*final*</sub>-Capital<sub>*init*</sub> and set the final exchange rate by an new call to a price oracle.
-
-3) In the redeemation period, owners of both aEURs and aEURu can now reclaim their tokens. The total interest payments are distributed to investors/hedgers depending on their share of the total investment. aEURs holders further receive &epsilon;<sub>*init*</sub> aDai from the contract. aEURu holders receive their initital investment + investment * &delta;&epsilon;<sub>*init*</sub>. Where &epsilon;<sub>*init*</sub> = 2 - &epsilon;<sub>*final*</sub>/&epsilon;<sub>*init*</sub>. Hereby, they get increase their principal if
-&epsilon;<sub>*final*</sub> < &epsilon;<sub>*init*</sub> and need to pay out to hedgers if not.
+2) During the savings period, the hedgers claim two coins against their deposits. For 2 aDai they receive 1 aEURu + 1/&epsilon;<sub>*init*</sub> aEURs
+aEURu. aEURu and aEURs are ERC20-tokens with which you can trade freely. For example, they can keep aEURu and sell their aEURs token to a retail investor.
+After some time the contract is called to start the redemption period 2)->3 We calculate the total interest payments claimed in the period as capital<sub>*final*</sub>-capital<sub>*init*</sub> and set the final exchange rate by calling a price oracle again.
 
 
+3) During the redemption period, owners of both aEURs and aEURu can now reclaim their tokens. The total interest payments are distributed to the investors/hedge holders according to their share of the total investment. aEURs holders will continue to receive &epsilon;<sub>*init*</sub> aDai from the contract. aEURu holders will receive their initial investment + investment * &delta;&epsilon;<sub>*init*</sub>. Where &epsilon;<sub>*init*</sub> = 2 - &epsilon;<sub>*final*</sub>/&epsilon;<sub>*init*</sub>. Hereby they receive an increase of their capital, if
+epsilon;<sub>*final*</sub> < &epsilon;<sub>*init*</sub> and must otherwise pay out the price losses of the retail investors.
 
-*Note 1) Traders are getting rewarded for the downside risk they take in USD by selling aEURs for a price p<&#8959(&epsilon;<sub>*init*</sub> Further they gain tokens when the EURO depreciates. In competitive markets, this should bring prices close to the [expected change in exchange rates. ](https://en.wikipedia.org/wiki/Interest_rate_parity)*
 
-*Note 2) Since we use USD as collateral as payout for both sides, we put in a conservative limit of 50% downwards/upwards  on exchange rate movements to make sure both sides will always get payed out (while obtaining a symmetric payount structure).  For the &euro;/&#36; currency pair this is would amount to an unpredecean volatility. A pool of multiple currencies might be used in the future to lower these restrictions* 
+
+
+*Note 1) Traders are rewarded for the downside risk they take in USD by receiving aEURs at a price p<&#8959;(&epsilon;<sub>*init*</sub> Furthermore they receive tokens when the EURO loses value. In competitive markets this should bring prices close to the [expected exchange rate change] (https://en.wikipedia.org/wiki/Interest_rate_parity)*.
+
+*Note 2) Since we use USD as collateral for payouts for both sides, we set a conservative 50% limit on exchange rate fluctuations downwards/upwards to ensure that both sides are always paid out (while maintaining a symmetrical structure of payout amounts).  For the currency pair &euro;/&#36; this would result in unpredictable volatility. A pool of multiple currencies could be used in the future to reduce these restrictions*. 
