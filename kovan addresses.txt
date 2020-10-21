@@ -9,5 +9,5 @@ aEURu address: 0x9aaCb04ADf1811b02a4d8550F592E8c33FaC4B55
 
 aDai address (fix): 0x58AD4cB396411B691A9AAb6F74545b2C5217FE6a
 
-Dai price: https://api.oasisdex.com/v2/prices
+
 
