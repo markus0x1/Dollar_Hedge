@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MIT
 
+// todo: add events, add require statements, use chainlink oracles
+
 pragma solidity ^0.6.7;
 
 
-
+// add some events to contract
 import "https://github.com/smartcontractkit/chainlink/blob/master/evm-contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.0.1/contracts/presets/ERC20PresetMinterPauser.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.0.1/contracts/access/Ownable.sol";
@@ -14,39 +16,58 @@ contract MainContract is Ownable {
     using SafeMath for uint256;
     using Math for uint256;
 
-    AggregatorV3Interface internal priceFeed;
+    AggregatorV3Interface internal priceFeed_eur_usd;
+    AggregatorV3Interface internal priceFeed_dai_usd;
     /**
      * Network: Kovan
-     * Aggregator: EUR/USD
-     * Address: 0x0c15Ab9A0DB086e062194c273CC79f41597Bbf13
+     * Aggregator:
+     * - EUR/USD,  Address: 0x0c15Ab9A0DB086e062194c273CC79f41597Bbf13
+     * - DAI/USD,  Address:	0x777A68032a88E5A84678A77Af2CD65A7b3c0775a
+     *
+     *
      */
     constructor() public {
-        priceFeed = AggregatorV3Interface(0x0c15Ab9A0DB086e062194c273CC79f41597Bbf13);
+        priceFeed_eur_usd = AggregatorV3Interface(0x0c15Ab9A0DB086e062194c273CC79f41597Bbf13);
+        priceFeed_dai_usd = AggregatorV3Interface(0x777A68032a88E5A84678A77Af2CD65A7b3c0775a);
     }
 
-    function getLatestPrice() public view returns (int) {
-        //(
-        //    uint80 roundID,
-        //    int price,
-        //    uint startedAt,
-        //    uint timeStamp,
-        //    uint80 answeredInRound
-        //) = priceFeed.latestRoundData();
+    function getLatestPrice_EUR() public view returns (int) {
+        (
+            ,
+            int price,
+            ,
+            uint timeStamp,
+            
+        ) = priceFeed_eur_usd.latestRoundData();
         // If the round is not complete yet, timestamp is 0
-        //require(timeStamp > 0, "Round not complete");
-        //return price; */
-        return 118186500;
+        require(timeStamp > 0, "Round not complete");
+        return price;
+        //return 118186500;
     }
+    function getLatestPrice_Dai() public view returns (int) {
+        (
+            ,
+            int price,
+            ,
+            uint timeStamp,
+            
+        ) = priceFeed_dai_usd.latestRoundData();
+        // If the round is not complete yet, timestamp is 0
+        require(timeStamp > 0, "Round not complete");
+        return price; 
+        //return 108186500;
+    }
+
 
     // exchange rate informations
     uint exchange_rate_start;
     uint exchange_rate_end;
-    uint limit_exchange_rate_end;
-    uint limit_exchange_rate_endr;
 
+
+    uint total_pre_pool_balance;
     uint total_pool_balance_start;
     uint total_pool_balance_end;
-    uint total_interest_payments;
+    uint total_post_pool_balance;
 
     address aEURs_address;
     address aEURu_address;
@@ -56,9 +77,26 @@ contract MainContract is Ownable {
     bool saving_is_over;
 
     // some random events
-    event SetExchangeRate (
-        int exchange_rate
+    event Invested_in_pool (
+        address _sender,
+        uint aDai_amount
     );
+    event Shares_Minted (
+        address _sender,
+        uint aDai_amount,
+        uint exchange_rate
+    );
+    event Redeemed_aEURs (
+        address _sender,
+        uint aEURs_amount,
+        uint exchange_rate
+    );
+    event Redeemed_aEURu (
+        address _sender,
+        uint aEURu_amount,
+        uint exchange_rate
+    );
+
 
     // mappings
     mapping(address => uint) public pre_pool_balances;
@@ -69,79 +107,53 @@ contract MainContract is Ownable {
     ERC20PresetMinterPauser public aEURu;
     ERC20 public aDai;
 
-    function pre_pool_balance() public view returns (uint) {
-        return pre_pool_balances[msg.sender];
-    }
-
-    function to_aEURs(uint _amount) public view returns (uint256) {
-        return _amount.mul(10**8).div(uint(exchange_rate_start));
+    function get_pre_pool_balance(address _address) public view returns (uint) {
+        return pre_pool_balances[_address];
     }
 
     function start_saving() public onlyOwner {
-        round_is_over = true;
-        exchange_rate_start = uint(getLatestPrice());
+        //round_is_over = true;
+        exchange_rate_start = uint(getLatestPrice_EUR());
     }
-
 
     function start_redeeming() public onlyOwner {
-        saving_is_over = true;
-        exchange_rate_end = uint(getLatestPrice());
-        limit_exchange_rate_end = limit_exchange_movement();
-        limit_exchange_rate_endr = limit_exchange_movement_r();
+        // saving_is_over = true;
+        exchange_rate_end = uint(getLatestPrice_EUR());
         total_pool_balance_end = aDai.balanceOf(address(this));
-        total_interest_payments = total_pool_balance_end.sub(total_pool_balance_start);
+        total_post_pool_balance = total_pool_balance_end;
     }
 
-    function limit_exchange_movement() public view returns (uint256) {
-        uint exchange_rt_min = exchange_rate_start.mul(5).div(10);
-        uint exchange_rt_max = exchange_rate_start.mul(15).div(10);
-        return exchange_rate_end.max(exchange_rt_min).min(exchange_rt_max);
-    }
-    function limit_exchange_movement_r() public view returns (uint256) {
-        uint ratio = exchange_rate_end.mul(10**9).div(exchange_rate_start);
-        ratio = ratio.max(5*10**8).min(15*10**8);
-        uint normalizer = 2*10**9;
-        return normalizer.sub(ratio).div(10);
-    }
 
     function fund_pre_pool(uint aDai_amount) public {
         bool success = aDai.transferFrom(msg.sender, address(this), aDai_amount);
         require(success, "buy failed");
         pre_pool_balances[msg.sender] = pre_pool_balances[msg.sender].add(aDai_amount);
         total_pool_balance_start = total_pool_balance_start.add(aDai_amount);
+        emit Invested_in_pool(msg.sender, aDai_amount);
     }
 
     function mint_tokens() external {
-      require(round_is_over, "Can not mint before investment round ended");
-      uint aDai_amount = pre_pool_balances[msg.sender];
-      pre_pool_balances[msg.sender] = pre_pool_balances[msg.sender].sub(aDai_amount);
-      _mint_euro_stable(aDai_amount.div(2));
-      _mint_euro_unstable(aDai_amount.div(2));
-    }
-
-    // redeem derivative tokens
-    function redeem_euro_stable(uint aEURs_amount) external{
-        require(saving_is_over, "Saving period has not stopped yet");
-        uint usd_amount_retail = _aEURs_to_aDai(aEURs_amount);
-        // aEURs.burn(aEURs_amount);
-        aEURs.transfer(address(this), aEURs_amount);
-        //aEURs.transfer(0x0000000000000000000000000000000000000000, aEURs_amount);
-        aDai.transfer(msg.sender, usd_amount_retail);
-    }
-
-    function redeem_euro_unstable(uint aEURu_amount) external{
-        require(saving_is_over, "Saving period has not stopped yet");
-        uint usd_amount_hedger = _aEURu_to_aDai(aEURu_amount);
-        //aEURu.burn(aEURu_amount);
-        aEURu.transfer(address(this), aEURu_amount);
-        //aEURu.transfer(0x0000000000000000000000000000000000000000, aEURu_amount);
-        aDai.transfer(msg.sender, usd_amount_hedger);
+        // require(round_is_over, "Can not mint before investment round ended");
+        uint aDai_amount = pre_pool_balances[msg.sender];
+        pre_pool_balances[msg.sender] = pre_pool_balances[msg.sender].sub(aDai_amount);
+        _mint_euro_stable(aDai_amount.div(2));
+        _mint_euro_unstable(aDai_amount.div(2));
+        emit Shares_Minted(msg.sender, aDai_amount, exchange_rate_start);
     }
 
 
     // utilities
     function get_contract_adress() public view returns (address) {
         return address(this);
+    }
+    function get_aEURs_address () public view returns(address) {
+        return aEURs_address;
+    }
+    function get_aEURu_address () public view returns(address) {
+        return aEURu_address;
+    }
+    function get_aDai_address () public view returns(address) {
+        return aDai_address;
     }
 
     // set new address (used for testing)
@@ -157,29 +169,14 @@ contract MainContract is Ownable {
         aDai_address = new_token_address;
         aDai = ERC20(new_token_address);
     }
-    // return information about address
-    function get_aEURs_address () public view returns(address) {
-        return aEURs_address;
-    }
-    function get_aEURu_address () public view returns(address) {
-        return aEURu_address;
-    }
-    function get_aDai_address () public view returns(address) {
-        return aDai_address;
-    }
 
-
-    // redirect interest to contract
-    //function is_not_redirected() internal returns (bool) {
-    //    return aDai.getInterestRedirectionAddress(msg.sender) == 0x0000000000000000000000000000000000000000
-    //}
 
     // mint derivative tokens
     function _mint_euro_stable(uint aDai_amount) internal{
-        uint256 aEURs_amount = _to_aEURs(aDai_amount);
+        uint256 aEURs_amount = _aDai_to_aEURs(aDai_amount);
         aEURs.mint(msg.sender,aEURs_amount);
     }
-    function _to_aEURs(uint _amount) public view returns (uint256) {
+    function _aDai_to_aEURs(uint _amount) internal view returns (uint256) {
         return _amount.mul(10**8).div(uint(exchange_rate_start));
     }
 
@@ -187,43 +184,110 @@ contract MainContract is Ownable {
         aEURu.mint(msg.sender,aDai_amount);
     }
 
+
+
+    // view your current balance
+    function get_aEURs_to_Dai(address _address) public view returns (uint256) {
+        uint _amount = aEURs.balanceOf(_address);
+        require(_amount>0, "Balance is zero");
+        return aEURs_to_aDai(_amount, uint(getLatestPrice_EUR()));
+    }
+    function get_aEURs_to_EUR(address _address) public view returns (uint256) {
+        return _Dai_to_EUR(get_aEURs_to_Dai(_address));
+    }
+    function get_aEURu_to_Dai(address _address) public view returns (uint256) {
+        uint _amount = aEURu.balanceOf(_address);
+        return aEURu_to_aDai(_amount, uint(getLatestPrice_EUR()));
+    }
+    function get_aEURu_to_EUR(address _address) public view returns (uint256) {
+        return _Dai_to_EUR(get_aEURu_to_Dai(_address));
+    }
+
+    // redeem derivative tokens
+    function redeem_euro_stable(uint aEURs_amount) external{
+        // require(saving_is_over, "Saving period has not stopped yet");
+        uint usd_amount_retail = aEURs_to_aDai(aEURs_amount, exchange_rate_end);
+        aEURs.burnFrom(msg.sender, aEURs_amount);
+        aDai.transfer(msg.sender, usd_amount_retail);
+        emit Redeemed_aEURs(msg.sender, aEURs_amount, exchange_rate_end);
+        total_post_pool_balance = total_post_pool_balance.sub(usd_amount_retail);
+    }
+
+
+    function redeem_euro_unstable(uint aEURu_amount) external{
+        // require(saving_is_over, "Saving period has not stopped yet");
+        uint usd_amount_hedger = aEURu_to_aDai(aEURu_amount, exchange_rate_end);
+        aEURu.burnFrom(msg.sender, aEURu_amount);
+        aDai.transfer(msg.sender, usd_amount_hedger);
+        emit Redeemed_aEURs(msg.sender, aEURu_amount, exchange_rate_end);
+        total_post_pool_balance = total_post_pool_balance.sub(usd_amount_hedger);
+    }
+
+
     // redeem aEURs tokens
-    function _aEURs_to_aDai(uint _amount) public view returns (uint256) {
-        uint interest_part = aEURs_interest(_amount);
-        uint principal_part = aEURs_to_dollar(_amount);
+    function aEURs_to_aDai(uint _amount, uint _exchange_rate) public view returns (uint256) {
+        uint interest_part = aEURs_interest(_amount, exchange_rate_start);
+        uint principal_part = aEURs_to_dollar(_amount, limit_exchange_movement_long(_exchange_rate));
         return  principal_part.add(interest_part);
     }
-    function aEURs_interest(uint _amount) public view returns (uint256) {
-        return _amount.mul(exchange_rate_start).mul(total_interest_payments).div(total_pool_balance_start).div(10**8); //
+    function aEURs_interest(uint _amount, uint _exchange_rate) internal view returns (uint256) {
+        return _amount.mul(_exchange_rate).mul(total_pool_balance_end.sub(total_pool_balance_start)).div(total_pool_balance_start).div(10**8); //
     }
-    function aEURs_to_dollar(uint _amount) public view returns (uint256) {
-        return _amount.mul(limit_exchange_rate_end).div(10**8);
+    function aEURs_to_dollar(uint _amount, uint _exchange_rate) internal pure returns (uint256) {
+        return _amount.mul(_exchange_rate).div(10**8);
     }
 
     // redeem aEURu tokens
-    function _aEURu_to_aDai(uint _amount) public view returns (uint256) {
+    function aEURu_to_aDai(uint _amount, uint _exchange_rate) public view returns (uint256) {
         uint interest_part = aEURu_interest(_amount);
-        uint principal_part = aEURu_to_dollar(_amount);
+        uint principal_part = aEURu_to_dollar(_amount, _exchange_rate);
         return  principal_part.add(interest_part);
     }
-    function aEURu_interest(uint _amount) public view returns (uint256) {
-        return  _amount.mul(total_interest_payments).div(total_pool_balance_start);
+    function aEURu_interest(uint _amount) internal view returns (uint256) {
+        return  _amount.mul(total_pool_balance_end.sub(total_pool_balance_start)).div(total_pool_balance_start);
     }
-    function aEURu_to_dollar(uint _amount) public view returns (uint256) {
-        return _amount.mul(limit_exchange_rate_endr).div(10**8);
-    }
-
-    // other info
-    function show_exchange_rates() public view returns (uint start_rate, uint end_rate, uint limit_rate_one, uint limit_rate_two) {
-        start_rate = exchange_rate_start;
-        end_rate = exchange_rate_end;
-        limit_rate_one = limit_exchange_rate_end;
-        limit_rate_two = limit_exchange_rate_endr;
+    function aEURu_to_dollar(uint _amount, uint _exchange_rate) internal view returns (uint256) {
+        return _amount.mul(limit_exchange_movement_short(_exchange_rate)).div(10**8);
     }
 
-    function show_pool_balances() public view returns (uint start_pool, uint end_pool, uint  interest_pool) {
-        start_pool =  total_pool_balance_start;
-        end_pool =  total_pool_balance_end;
-        interest_pool = total_interest_payments;
+    // exchange rate conversion helper
+    function _Dai_to_EUR(uint _amount) internal view returns (uint256) {
+        return _amount.mul(uint(getLatestPrice_EUR())).div(uint(getLatestPrice_Dai()));
     }
+    function _Dai_to_USD(uint _amount) internal view returns (uint256) {
+        return _amount.mul(uint(getLatestPrice_Dai())).div(10**8);
+    }
+
+    // limit exchange rate movements hedged by the contract to 50% up/down
+    function limit_exchange_movement_long(uint _exchange_rt) internal view returns (uint256) {
+        uint exchange_rt_min = exchange_rate_start.mul(5).div(10);
+        uint exchange_rt_max = exchange_rate_start.mul(15).div(10);
+        return _exchange_rt.max(exchange_rt_min).min(exchange_rt_max);
+    }
+    function limit_exchange_movement_short(uint _exchange_rt) internal view returns (uint256) {
+        uint ratio = _exchange_rt.mul(10**9).div(exchange_rate_start);
+        ratio = ratio.max(5*10**8).min(15*10**8);
+        uint normalizer = 2*10**9;
+        return normalizer.sub(ratio).div(10);
+    }
+    // other utility functions
+    function show_exchange_rates() public view returns (uint _exchange_rate_start, uint _exchange_rate_end) {
+        _exchange_rate_start = exchange_rate_start;
+        _exchange_rate_end = exchange_rate_end;
+    }
+
+    function show_pool_balances() public view returns (uint  _total_pre_pool_balance, uint  _total_pool_balance_start, uint _total_pool_balance_end, uint _total_post_pool_balance) {
+        _total_pre_pool_balance = total_pre_pool_balance;
+        _total_pool_balance_start =  total_pool_balance_start;
+        _total_pool_balance_end =  total_pool_balance_end;
+        _total_post_pool_balance = total_post_pool_balance;
+    }
+
+    function is_saving_over() public view returns (bool) {
+            return saving_is_over;
+    }
+    function is_round_over() public view returns (bool) {
+            return round_is_over;
+    }
+
 }
