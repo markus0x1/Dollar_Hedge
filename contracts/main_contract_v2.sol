@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: MIT
 
-// todo: add events, add require statements, use chainlink oracles
-
 pragma solidity ^0.6.7;
 
 
@@ -67,6 +65,7 @@ contract MainContract is Ownable {
     uint total_pre_pool_balance;
     uint total_pool_balance_start;
     uint total_pool_balance_end;
+    uint total_post_pool_balance;
 
     address aEURs_address;
     address aEURu_address;
@@ -76,9 +75,26 @@ contract MainContract is Ownable {
     bool saving_is_over;
 
     // some random events
-    event SetExchangeRate (
-        int exchange_rate
+    event Invested_in_pool (
+        address _sender,
+        uint aDai_amount
     );
+    event Shares_Minted (
+        address _sender,
+        uint aDai_amount,
+        uint exchange_rate
+    );
+    event Redeemed_aEURs (
+        address _sender,
+        uint aEURs_amount,
+        uint exchange_rate
+    );
+    event Redeemed_aEURu (
+        address _sender,
+        uint aEURu_amount,
+        uint exchange_rate
+    );
+
 
     // mappings
     mapping(address => uint) public pre_pool_balances;
@@ -102,6 +118,7 @@ contract MainContract is Ownable {
         // saving_is_over = true;
         exchange_rate_end = uint(getLatestPrice_EUR());
         total_pool_balance_end = aDai.balanceOf(address(this));
+        total_post_pool_balance = total_pool_balance_end;
     }
 
 
@@ -110,14 +127,16 @@ contract MainContract is Ownable {
         require(success, "buy failed");
         pre_pool_balances[msg.sender] = pre_pool_balances[msg.sender].add(aDai_amount);
         total_pool_balance_start = total_pool_balance_start.add(aDai_amount);
+        emit Invested_in_pool(msg.sender, aDai_amount);
     }
 
     function mint_tokens() external {
-      // require(round_is_over, "Can not mint before investment round ended");
-      uint aDai_amount = pre_pool_balances[msg.sender];
-      pre_pool_balances[msg.sender] = pre_pool_balances[msg.sender].sub(aDai_amount);
-      _mint_euro_stable(aDai_amount.div(2));
-      _mint_euro_unstable(aDai_amount.div(2));
+        // require(round_is_over, "Can not mint before investment round ended");
+        uint aDai_amount = pre_pool_balances[msg.sender];
+        pre_pool_balances[msg.sender] = pre_pool_balances[msg.sender].sub(aDai_amount);
+        _mint_euro_stable(aDai_amount.div(2));
+        _mint_euro_unstable(aDai_amount.div(2));
+        emit Shares_Minted(msg.sender, aDai_amount, exchange_rate_start);
     }
 
 
@@ -188,13 +207,18 @@ contract MainContract is Ownable {
         uint usd_amount_retail = aEURs_to_aDai(aEURs_amount, exchange_rate_end);
         aEURs.burnFrom(msg.sender, aEURs_amount);
         aDai.transfer(msg.sender, usd_amount_retail);
+        emit Redeemed_aEURs(msg.sender, aEURs_amount, exchange_rate_end);
+        total_post_pool_balance = total_post_pool_balance.sub(usd_amount_retail);
     }
+
 
     function redeem_euro_unstable(uint aEURu_amount) external{
         // require(saving_is_over, "Saving period has not stopped yet");
         uint usd_amount_hedger = aEURu_to_aDai(aEURu_amount, exchange_rate_end);
         aEURu.burnFrom(msg.sender, aEURu_amount);
         aDai.transfer(msg.sender, usd_amount_hedger);
+        emit Redeemed_aEURs(msg.sender, aEURu_amount, exchange_rate_end);
+        total_post_pool_balance = total_post_pool_balance.sub(usd_amount_hedger);
     }
 
 
@@ -250,9 +274,11 @@ contract MainContract is Ownable {
         _exchange_rate_end = exchange_rate_end;
     }
 
-    function show_pool_balances() public view returns (uint  _total_pool_balance_start, uint _total_pool_balance_end) {
+    function show_pool_balances() public view returns (uint  _total_pre_pool_balance, uint  _total_pool_balance_start, uint _total_pool_balance_end, uint _total_post_pool_balance) {
+        _total_pre_pool_balance = total_pre_pool_balance;
         _total_pool_balance_start =  total_pool_balance_start;
         _total_pool_balance_end =  total_pool_balance_end;
+        _total_post_pool_balance = total_post_pool_balance;
     }
 
     function is_saving_over() public view returns (bool) {
