@@ -1,14 +1,23 @@
-<mxfile host="app.diagrams.net" modified="2020-10-21T13:52:52.053Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36" etag="iWVyjomPWn3VPRRgglb9" version="13.8.1" type="github">
+<mxfile host="app.diagrams.net" modified="2020-10-21T14:38:28.320Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.75 Safari/537.36" etag="iMHE9nI-uVC8eZ4vlcEB" version="13.8.1" type="github" pages="2">
   <diagram id="2dJAtTzYBBDmyN-PzjmT" name="Page-1">
-    <mxGraphModel dx="1021" dy="1667" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1447" dy="1903" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="4XUhLhnA6siuGQTpz5Ow-30" value="&lt;h1&gt;&lt;br&gt;&lt;/h1&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;arcSize=14;strokeWidth=2;align=center;strokeColor=#6c8ebf;fillColor=#86FC7E;verticalAlign=top;fontStyle=4" vertex="1" parent="1">
-          <mxGeometry x="170" y="-250" width="720" height="340" as="geometry" />
+          <mxGeometry x="120" y="-240" width="570" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="4XUhLhnA6siuGQTpz5Ow-33" value="&lt;h1&gt;Main Contract&lt;/h1&gt;&lt;p&gt;&lt;/p&gt;&lt;ol&gt;&lt;li style=&quot;text-align: left&quot;&gt;Send&lt;/li&gt;&lt;li style=&quot;text-align: left&quot;&gt;Call Price oracle and set initial exchange rate e_0 = EUR/USD&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;shadow=1;dashed=1;dashPattern=1 1;labelBackgroundColor=none;fontColor=#000000;align=center;" vertex="1" parent="1">
+          <mxGeometry x="430" y="-230" width="220" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="4XUhLhnA6siuGQTpz5Ow-35" value="&lt;span style=&quot;font-size: 27px&quot;&gt;Chainlink EURO/USD &lt;br&gt;PRICE ORACLE&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;dashed=1;dashPattern=1 1;labelBackgroundColor=none;strokeWidth=4;align=center;strokeColor=#10739e;glass=0;sketch=0;fillColor=#b1ddf0;fontSize=27;" vertex="1" parent="1">
+          <mxGeometry x="430" y="220" width="220" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="G5pyGGpDoqd2RvzIEwfP-1" value="" style="shape=actor;whiteSpace=wrap;html=1;rounded=0;shadow=0;glass=0;labelBackgroundColor=none;sketch=0;strokeWidth=4;fillColor=#b0e3e6;fontSize=27;align=center;strokeColor=#0e8088;" vertex="1" parent="1">
+          <mxGeometry x="200" y="280" width="40" height="60" as="geometry" />
         </mxCell>
         <mxCell id="4XUhLhnA6siuGQTpz5Ow-1" value="Pre-Pool" style="shape=table;startSize=60;container=1;collapsible=1;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;resizeLast=1;rounded=0;shadow=1;strokeWidth=4;fillColor=#FFFF9C;" vertex="1" parent="1">
-          <mxGeometry x="190" y="-190" width="220" height="160" as="geometry">
+          <mxGeometry x="160" y="-190" width="220" height="160" as="geometry">
             <mxRectangle x="190" y="-190" width="80" height="60" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
@@ -39,21 +48,20 @@
         <mxCell id="4XUhLhnA6siuGQTpz5Ow-10" value="1/e aDAIu" style="shape=partialRectangle;connectable=0;top=0;left=0;bottom=0;right=0;align=center;spacingLeft=6;overflow=hidden;labelBackgroundColor=none;fontStyle=1;fillColor=#FFFFB8;" vertex="1" parent="4XUhLhnA6siuGQTpz5Ow-8">
           <mxGeometry x="110" width="110" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="4XUhLhnA6siuGQTpz5Ow-33" value="&lt;h1&gt;Main Contract&lt;/h1&gt;&lt;p&gt;&lt;/p&gt;&lt;ol&gt;&lt;li style=&quot;text-align: left&quot;&gt;Send&lt;/li&gt;&lt;li style=&quot;text-align: left&quot;&gt;Call Price oracle and set additional exchange rate e.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;shadow=1;dashed=1;dashPattern=1 1;labelBackgroundColor=none;fontColor=#000000;align=center;" vertex="1" parent="1">
-          <mxGeometry x="430" y="-230" width="390" height="300" as="geometry" />
-        </mxCell>
-        <mxCell id="4XUhLhnA6siuGQTpz5Ow-35" value="&lt;span style=&quot;font-size: 27px&quot;&gt;Chainlink EURO/USD &lt;br&gt;PRICE ORACLE&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;shadow=0;dashed=1;dashPattern=1 1;labelBackgroundColor=none;strokeWidth=4;align=center;strokeColor=#10739e;glass=0;sketch=0;fillColor=#b1ddf0;fontSize=27;" vertex="1" parent="1">
-          <mxGeometry x="500" y="230" width="220" height="180" as="geometry" />
-        </mxCell>
-        <mxCell id="4XUhLhnA6siuGQTpz5Ow-36" value="" style="endArrow=classic;html=1;fontSize=27;fontColor=#000000;entryX=0.609;entryY=1.005;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="4XUhLhnA6siuGQTpz5Ow-35" target="4XUhLhnA6siuGQTpz5Ow-30">
+        <mxCell id="uuhmvlGmtuIwiNIzIhra-1" value="&lt;font style=&quot;font-size: 12px&quot;&gt;2 ADai&lt;/font&gt;" style="endArrow=classic;html=1;fontSize=27;fontColor=#000000;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="G5pyGGpDoqd2RvzIEwfP-1" target="4XUhLhnA6siuGQTpz5Ow-1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="310" y="120" as="sourcePoint" />
-            <mxPoint x="410" y="120" as="targetPoint" />
+            <mxPoint x="460" y="60" as="sourcePoint" />
+            <mxPoint x="560" y="60" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="4XUhLhnA6siuGQTpz5Ow-37" value="EUR/USD" style="edgeLabel;resizable=0;html=1;align=center;verticalAlign=middle;" connectable="0" vertex="1" parent="4XUhLhnA6siuGQTpz5Ow-36">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="HZ3dKPAo8PAfwK-Si58E" name="Page-2">
+    <mxGraphModel dx="868" dy="482" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="-0bQhvXT2Ae33jYl0nog-0" />
+        <mxCell id="-0bQhvXT2Ae33jYl0nog-1" parent="-0bQhvXT2Ae33jYl0nog-0" />
       </root>
     </mxGraphModel>
   </diagram>
