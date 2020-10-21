@@ -21,7 +21,7 @@
     <script type="text/javascript" src="abis/main_contract.js"></script>
 
     <script type="text/javascript">
-        var contract_adress = "0x19238F21deA6E1057B94449629D90b1080e767E4";
+        var contract_adress = "0x891e768C4A692C075CD91242597FeF32e844f5B5";
         var aEURs_adress = "0x64666EBac41fC25EcA74A77dcf1E101cfc00a948";
         var aEURu_adress = "0x9aaCb04ADf1811b02a4d8550F592E8c33FaC4B55";
         var aDAI_adress = "0x58AD4cB396411B691A9AAb6F74545b2C5217FE6a";
@@ -333,7 +333,7 @@
         async function RedeemAEURu() {
             var MyContract = new window.web3.eth.Contract(mainContractAbi, contract_adress);
             
-            MyContract.methods.redeem_euro_stable(aEURu_amount).send({from:current_adress})
+            MyContract.methods.redeem_euro_unstable(aEURu_amount).send({from:current_adress})
                 .then(function () {
                    /* var raw = result;
                     var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
@@ -347,7 +347,7 @@
         async function RedeemAEURs() {
             var MyContract = new window.web3.eth.Contract(mainContractAbi, contract_adress);
             
-            MyContract.methods.redeem_euro_unstable(aEURs_amount).send({from:current_adress})
+            MyContract.methods.redeem_euro_stable(aEURs_amount).send({from:current_adress})
                 .then(function () {
                     /*var raw = result;
                     var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
@@ -363,7 +363,7 @@
 
     <style>
         body {
-            background-image: linear-gradient(90deg, rgb(0, 0, 0) 0%, rgb(255, 255, 255) 0%, rgb(59, 161, 116) 100%, rgb(0, 212, 255) 100%);
+            background-image: linear-gradient(to bot right, rgb(0, 0, 0) 0%, rgb(255, 255, 255) 0%, rgb(59, 161, 116) 100%, rgb(0, 212, 255) 100%);
         }
 
         h1 {
@@ -437,15 +437,11 @@
 
 
             <div class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <div id="MarketSize">Pool: 0</div>
+                <div id="MarketSize">  Pool: 0 <i class="material-icons">account_balance</i></div>
             </div>
             <div class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <div id="aDai"> Pool Growth since prepool closed: </div>
+                <div id="aDai"> Pool Growth since prepool closed: <i class="material-icons">show_chart</i></div>
             </div>
-
-            <div class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <div id="aDaiSupplied">You did deposit: </div>
-            </div>      
 
         </div>
 
@@ -466,20 +462,21 @@
                     <label for="aDAI_amount_to_fund">aDAI amount</label>
                 </div>
                 <button id="aDAIAllowance" class="waves-effect waves-light btn">Add Allowance</button> <br>
-                <button id="DepositADAI" class="waves-effect waves-light btn">deposit aDai</button>
+                <button id="DepositADAI" class="waves-effect waves-light btn">deposit aDai <i class="material-icons">call_merge</i><i class="material-icons">account_balance</i></button>
             </div>
             <div id="test2" class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <button id="MintTokens" class="waves-effect waves-light btn">Mint Fortunate Euro Coin</button>
+                <button id="MintTokens" class="waves-effect waves-light btn">Mint Fortunate Euro Coin  <i class="material-icons">content_copy</i> </button>
             </div>
             <div id="test3" class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <a href="https://kovan.balancer.exchange/#/swap">Trade your shares :)</a>
-                <iframe src="https://app.uniswap.org/#/swap" width="100%" height="500" style=" left: 50%; width:100%;height:500;max-width:515px;" frameborder="0" scrolling="no"></iframe>
+                <p class="flow-text">Trade your shares</p>
+          
+                <iframe src="https://app.uniswap.org/#/swap" width="100%" height="500" style=" left: 50%; width:100%;height:800;max-width:600;" frameborder="0" scrolling="no"></iframe>          
             </div>
             <div id="test4" class="col s12 m8 offset-m1 xl7 offset-xl1">                
                 <button id="AddAEURsAllowance" class="waves-effect waves-light btn">Add aEURs Allowance</button> <br>
-                <button id="AddAEURuAllowance" class="waves-effect waves-light btn">Add aEURu Allowance</button> <br>
-                <button id="RedeemAEURs" class="waves-effect waves-light btn">Redeem aEURs</button>
-                <button id="RedeemAEURu" class="waves-effect waves-light btn">Redeem aEURu</button>
+                <button id="RedeemAEURs" class="waves-effect waves-light btn">Redeem aEURs <i class="material-icons">euro_symbol</i></button><br><br>  
+                <button id="AddAEURuAllowance" class="waves-effect waves-light btn">Add aEURu Allowance</button> <br>               
+                <button id="RedeemAEURu" class="waves-effect waves-light btn">Redeem aEURu <i class="material-icons">compare_arrows</i></button>
             </div>
 
         </div>

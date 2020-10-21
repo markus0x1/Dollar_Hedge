@@ -19,8 +19,8 @@
     <script type="text/javascript" src="abis/aDai.js"></script>
 
     <script type="text/javascript">
-     
-     const ethEnabled = () => {
+
+        const ethEnabled = () => {
             if (window.ethereum) {
                 window.web3 = new Web3(window.ethereum);
                 window.ethereum.enable();
@@ -31,7 +31,7 @@
 
         var ethereumButton;
         var address = "";
-        window.onload = function() {
+        window.onload = function () {
             ethereumButton = document.getElementById("enableEthereumButton");
             contractButton = document.getElementById("Contract");
 
@@ -63,10 +63,10 @@
 
         async function getAEURO() {
             var MyContract = new web3.eth.Contract(abi, '0x284357BEA8cAEE783Cf727Ff27128d4446f1EEC3');
-            (window.web3.eth.getAccounts()).then(function(result) {
+            (window.web3.eth.getAccounts()).then(function (result) {
 
                 MyContract.methods.balanceOf(result[0]).call()
-                    .then(function(result) {
+                    .then(function (result) {
                         var raw = result;
                         var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
 
@@ -77,7 +77,7 @@
 
 
                 MyContract.methods.totalSupply().call()
-                    .then(function(result) {
+                    .then(function (result) {
                         var raw = result;
                         var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
 
@@ -91,10 +91,10 @@
 
         async function Addallowance() {
             var MyContract = new web3.eth.Contract(abi, '0x284357BEA8cAEE783Cf727Ff27128d4446f1EEC3');
-            (window.web3.eth.getAccounts()).then(function(result) {
+            (window.web3.eth.getAccounts()).then(function (result) {
 
                 MyContract.methods.increaseAllowance(result[0], 500).call()
-                    .then(function(result) {
+                    .then(function (result) {
                         var raw = result;
                         var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
 
@@ -108,10 +108,10 @@
 
         async function getADai() {
             var MyContract = new web3.eth.Contract(aDaiAbi, '0x58ad4cb396411b691a9aab6f74545b2c5217fe6a');
-            (window.web3.eth.getAccounts()).then(function(result) {
+            (window.web3.eth.getAccounts()).then(function (result) {
 
                 MyContract.methods.balanceOf(result[0]).call()
-                    .then(function(result) {
+                    .then(function (result) {
                         var raw = result;
                         var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
 
@@ -123,56 +123,79 @@
 
         }
 
-        
+
 
     </script>
 
 
     <style>
-    body {background-image: linear-gradient(90deg, rgb(0, 0, 0) 0%, rgb(255, 255, 255) 0%, rgb(59, 161, 116) 100%, rgb(0, 212, 255) 100%);}
-    h1   {color: blue;}
-    p    {color: red;}
+        body {
+           background-image: linear-gradient(90deg, rgb(0, 0, 0) 0%, rgb(255, 255, 255) 0%, rgb(59, 161, 116) 100%, rgb(0, 212, 255) 100%);
+        }
+
+        h1 {
+            color: blue;
+        }
+
+        p {
+            color: red;
+        }
 
 
-    .topbar{
-        position: fixed;
-        width: 100%;
-    }
-
+        .topbar {
+            position: fixed;
+            width: 100%;
+        }
     </style>
 
-  
+
 
 </head>
 
 <body>
-  <nav>
-    <div class="nav-wrapper teal">
-      <a href="#!" class="brand-logo">Logo</a>
-      <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-      <ul class="right hide-on-med-and-down">
-        <li><a href="sass.html">About</a></li>
-        <li><a href="badges.html">FAQ</a></li>
-        <li><a href="https://github.com/SchickMarkus/Dollar_Hedge">Documentation</a></li>
-        
-      </ul>
-    </div>
-  </nav>
+    <nav>
+        <div class="nav-wrapper teal">
+            <a href="#!" class="brand-logo"> Cortex Hedge</a>
+            <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="sass.html">About</a></li>
+                <li><a href="badges.html">FAQ</a></li>
+                <li><a href="https://github.com/SchickMarkus/Dollar_Hedge">Documentation</a></li>
 
-  <ul class="sidenav" id="mobile-demo">
-         <li><a href="sass.html">About</a></li>
-        <li><a href="badges.html">FAQ</a></li>
-        <li><a href="https://github.com/SchickMarkus/Dollar_Hedge">Documentation</a></li>
-    
-  </ul>
-          
-        
+            </ul>
+        </div>
+    </nav>
+
+    <ul class="sidenav" id="mobile-demo">
+        <li><a href="sass.html">About<i class="material-icons">public</i></a></li>
+        <li><a href="badges.html">FAQ<i class="material-icons">question_answer</i></a></li>
+        <li><a href="https://github.com/SchickMarkus/Dollar_Hedge">Documentation<i class="material-icons">code</i></a>
+        </li>
+
+    </ul>
+
+
     <div class="container">
 
         <div class="row">
 
             <div class="col s12 blue-text text-darken-2">
                 <h1 class=""> THE EURO SAVING PROTOCOL </h1>
+                <div >
+                    In modern times, it gets increasingly hard to grow your capital.<br>
+                    The historically low interest rate regime forces you to take new ways.<br>
+                    Decentralized saving protocols like aave bare an opportunity to take your assets and let them work for you.<br>
+                    Stablecoins used by these platforms are tied to the USD, which leaves Europeans in an unattractive position.<br>
+                    Putting your savings into a foreign currency exposes you to many risks!<br>
+                    
+                    Our goal is to offer you an opportunity, to make sure your savings dont get shrinked due to the USD falling in value.<br>                    
+                    
+                    <br>
+                    Like every coin, ours has two sides to it :)<br>
+                    As an investor you get the chance to earn some extra money<br>
+                    <br>
+                
+                </div>
             </div>
 
             <div class="col s12">
@@ -190,90 +213,114 @@
         </div>
 
 
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content flow-text">
+                    <div class="col s12">How it works for Savers:</div> <br>
 
-<div class="col s12">HOW IT WORKS for Savers</div>
+                    I WANT TO SAVE MY EUROS WITH AAVE, BUT IM AFRAID TO LOOSE MY SAVINGS FROM EXCHAGE RATE MOVEMENTS.<br>
+                    <!--GET BANGED BY EXCHANGE RATE CHANGES!<br> -->
+            
+                    
+                </div>
+                
 
-    <div class="col s12 card">
-        <br> I WANT TO SAVE MY EUROS WITH AAVE, BUT IM AFRAID TO LOOSE MY SAVINGS FROM EXCHAGE RATE MOVEMENTS.<br> <!--GET BANGED BY EXCHANGE RATE CHANGES!<br> -->
-    </div>
-    <ul class="tabs">
-        <li class="tab col s3"><a href="#test1a">Buy Tokens</a></li>
-        <li class="tab col s3"><a class="active" href="#test2a">Redeem aDAI</a></li>
-    </ul>
-    <div id="test1a" class="col s12 white">
-        <h1>1</h1> 
-        Get aEURs on an Exchange of your choice. <br>
-        TIP: You can use our tools (find in the app) to check if you are paying a fair price.
-        Check the fixed exchange rate <SPAN STYLE="text-decoration:overline">e</SPAN> you will get back after 
-        the waiting period.
-    </div>
-    <div id="test2a" class="col s12 white">
-        <h1>2</h1> 
-        After 12 month, the redemption phase begins. You can now turn your aEURu back to aDAI.<br> 
-        For 1 aEURu you get <SPAN STYLE="text-decoration:overline">e</SPAN> aDai + aDai interest payments.
+                <div class="card-tabs">
+                    <ul class="tabs">
+                        <li class="tab col s3"><a href="#test1a">Buy Tokens</a></li>
+                        <li class="tab col s3"><a class="active" href="#test2a">Redeem aDAI</a></li>
+                    </ul>
+                </div>
+
+
+                <div class="card-content grey lighten-4">
+                    <div id="test1a" class="flow-text col s12 ">
+
+                        Get aEURs on an Exchange of your choice. <br>
+                        TIP: You can use our tools (find in the app) to check if you are paying a fair price.
+                        Check the fixed exchange rate <SPAN STYLE="text-decoration:overline">e</SPAN> you will get back after
+                        the waiting period.
+                    </div>
+                    <div id="test2a" class="flow-text col s12 ">
+                        After 12 month, the redemption phase begins. You can now turn your aEURu back to aDAI.<br>
+                        For 1 aEURu you get <SPAN STYLE="text-decoration:overline">e</SPAN> aDai + aDai interest payments.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <br>
+
+     
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content flow-text">
+                    <div class="col s12">How it works for Investors:</div> <br>
+
+                            I WANT TO MAXIMIZE MY YIELDS AND FIND SINGLE DIGIT PRICE CHANGES CUTE.
+                    
+            
+                    
+                </div>
+                
+
+                <div class="card-tabs">
+                    <ul class="tabs">
+                        <li class="tab col s3"><a href="#test1">Invest</a></li>
+                        <li class="tab col s3"><a class="active" href="#test2">Claim Tokens</a></li>
+                        <li class="tab col s3 "><a href="#test3">Sell tokens</a></li>
+                        <li class="tab col s3"><a href="#test4">Redeem aDAI</a></li>
+                    </ul>
+                </div>
+
+
+                <div class="card-content grey lighten-4">
+                    <div id="test1" class="flow-text  col s12 ">
+                        Check the page for open saving pools.
+                        Deposit your aDAI into the pre-pool.
+                        Wait until the savings period is over.
+                    </div>
+                    <div id="test2" class="flow-text  col s12 ">
+                        click CLAIM TOKENS to mint aEURs & aEURu with your deposits. <br>
+                        For 2 $ you get 1 aEURu and USD/EUR aEURs.
+                    </div>
+                    <div id="test3" class="flow-text  col s12 ">
+                        Sell your aEURs tokens to customers on a (decentralized) exchange. You can charge your
+                        customers a small fee by selling the Tokens slightly below their redeemation value.
+
+                    </div>
+                    <div id="test4" class="flow-text col s12 ">
+                        After 12 month, the redemption phase begins. You can now turn your aEURu back to aDAI.<br>
+                        For 1 aEURu you get 1 aDai (principal + accrued interest) +/- exchange rate movements
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
-    
-    
 
-<div class="col s12">HOW IT WORKS for Investors</div>
 
-<div class="col s12 card">
-    I WANT TO MAXIMIZE MY YIELDS AND FIND SINGLE DIGIT PRICE CHANGES CUTE.
-</div>
 
-    <div class="col s12">
 
-        <ul class="tabs">
-            <li class="tab col s3"><a href="#test1">Invest</a></li>
-            <li class="tab col s3"><a class="active" href="#test2">Claim Tokens</a></li>
-            <li class="tab col s3 "><a href="#test3">Sell tokens</a></li>
-            <li class="tab col s3"><a href="#test4">Redeem aDAI</a></li>
-        </ul>
-
-        </div>
-        <div id="test1" class="col s12 white">
-            <h1>1</h1> 
-            Check the page for open saving pools.
-            Deposit your aDAI into the pre-pool. 
-            Wait until the savings period is over.
-        </div>
-        <div id="test2" class="col s12 white">
-            <h1>2</h1> click CLAIM TOKENS to mint aEURs & aEURu with your deposits. <br>   
-                       For 2 $ you get 1 aEURu and USD/EUR aEURs.                    
-        </div>
-        <div id="test3" class="col s12 white">
-         <h1>3</h1> Sell your aEURs tokens to customers on a (decentralized) exchange. You can charge your
-                    customers a small fee by selling the Tokens slightly below their redeemation value. 
-  
-        </div>
-        <div id="test4" class="col s12 white">
-         <h1>4</h1> After 12 month, the redemption phase begins. You can now turn your aEURu back to aDAI.<br>   
-                    For 1 aEURu you get 1 aDai (principal + accrued interest) +/- exchange rate movements 
-                 </div>
-        </div>
-    </div>
     <br>
+    <!--
     <div id="test4" class="col s12 white">
         <iframe src="https://tradingeconomics.com/embed/?s=eurusd&v=201808181800x&h=300&w=600&ref=/iframe/chart.aspx" width="100%" height="320" style=" left: 50%; width:100%;height:1200;max-width:515px;" frameborder="0" scrolling="no"></iframe>
-    </div>
-          <div class="row">
-        
-           
-
+    </div>-->
 
 
     <!--JavaScript at end of body for optimized loading-->
     <script type="text/javascript" src="js/materialize.min.js"></script>
 
-      <script type="text/javascript">
-       document.addEventListener('DOMContentLoaded', function() {
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
             var elems = document.querySelectorAll('.sidenav');
             var instances = M.Sidenav.init(elems);
 
             var tabs = document.querySelectorAll('.tabs');
-            
-            var instance = M.Tabs.init(tabs, {swipeable: true});
+
+            var instance = M.Tabs.init(tabs, { swipeable: true });
         });
 
     </script>
