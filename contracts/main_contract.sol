@@ -276,8 +276,7 @@ contract MainContract is Ownable {
         _exchange_rate_end = exchange_rate_end;
     }
 
-    function show_pool_balances() public view returns (uint  _total_pre_pool_balance, uint  _total_pool_balance_start, uint _total_pool_balance_end, uint _total_post_pool_balance) {
-        _total_pre_pool_balance = total_pre_pool_balance;
+    function show_pool_balances() public view returns (uint  _total_pool_balance_start, uint _total_pool_balance_end, uint _total_post_pool_balance) {
         _total_pool_balance_start =  total_pool_balance_start;
         _total_pool_balance_end =  total_pool_balance_end;
         _total_post_pool_balance = total_post_pool_balance;
