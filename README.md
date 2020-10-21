@@ -1,17 +1,37 @@
 # Dollar_Hedge
-An simple dapp to hedge exchange rate risk using tokenized interest bearing stablecoins
+An simple dapp to hedge exchange rate risk using tokenized interest bearing stablecoins. Developed as part of the ETHOnline 2020 Hackathon (https://ethonline.org/).
 
 ## Motivation
 Stablecoins are a well-known instrument for hedging the volatility of crypto currencies. When  supplied to a lending protocol and they become an attractive alternative to a savings accounts. However, most Stablecoins are demonised in US dollars. This is useful as it allows specialised AMMs such as Curve to trade between them without any wild fluctuations. 
 However, US Stablecoins may be unattractive to many people outside the United States. Since their income, expenses and/or tax liabilities are most likely denominated in a currency other than the stablecoin. This creates an exchange rate risk for their savings accounts (which is considered to be the safe part of the household portfolio).  
 Even exchange rates between economically developed and large economies are remarkably volatile and can fluctuate widely over several months. For example, the EURO  lost 20% of its value in 2007/2008.
-(There are numerous examples of rapid exchange rate movements for small countries. E.g. https://en.wikipedia.org/wiki/Turkish_currency_and_debt_crisis,_2018 or https://en.wikipedia.org/wiki/2018_Argentine_monetary_crisis for sharp declines or a sudden increase https://en.wikipedia.org/wiki/Swiss_franc).
-All this makes the latest innovation in DEFI less valuable to people outside the US. 
-The entire DEFI sector is still quite small in the global economy, and the US dollar has large network effects. We therefore believe that it is neither feasible nor practical to solve this problem by introducing a large number of alternative stablecoins. Instead, we are creating a risk hedging mechanism.
+(There are numerous examples of rapid exchange rate movements for small countries. E.g. [2018 Turkey](https://en.wikipedia.org/wiki/Turkish_currency_and_debt_crisis,_2018), 
+[2018 Argentina](https://en.wikipedia.org/wiki/2018_Argentine_monetary_crisis) for sharp declines or a sudden increase 
+[2014 Switzerland](https://en.wikipedia.org/wiki/Swiss_franc). All of this makes the latest DEFI innovation less valuable to people outside the US, as your savings portfolio should not be exposed to such volatility.
+The entire DEFI sector is still quite small in the global economy, and the US dollar has large network effects. We therefore believe that it is neither feasible nor practical to solve this problem by introducing a large number of alternative stablecoins. Instead, we are creating a **risk hedging mechanism** for retail investors.
 
-## Mechanism 
+
+## Brief desription
 We propose a simple swap mechanism to hedge the currency risk for retail investors using stable USD coins. 
 As a first step, the stable coin will be lent through a lending protocol such as Aave or Compound. 
-The next step is for the user to wrap the interest-bearing stable coin in our contract. Our platform can be used by two types of market participants. Retail investors mint intEURs - an interest-bearing EUR-stablecoin - via our platform. intEUR can be redeemed on the platform for a fixed amount in EURO. 
-Traders mint intEURu. intEURu can be redeemed on the platform at an exchange rate of 1-S_1/S_0, where S_1 and S_0 are the EUR/USD exchange rates at time t=1 and t=0 respectively. 
-Traders could be rewarded for the downside risk they take in USD by being paid an interest rate r. Further they gain tokens when the EURO depreciates. In competitive markets, this should bring prices of our service close to the expected change in exchange rates. https://en.wikipedia.org/wiki/Interest_rate_parity 
+The next step is for the user to wrap the interest-bearing stable coin in our contract. We leverage the Aave protocoll to produce interest on the deposits.
+Our contract works as a platform to connect two types of market participants. Retail investors buy in to receive interest on their deposits while insuring their deposits against exchange rate movements. More specific: They always receive their initital deposit back *in EURO*. Hedgers provide their capital to the pool. They benefit from exchange rate movements and pay retail investors out if the EURO appreciates in value. They can demand a fee to Retail investors for this service. 
+
+## Technical technical
+Our systems has 3 main phases where actors can interact with the contract. 
+1) In the waiting period Hedgers deposit aDai to the contract. 
+After some time the contract can be called up to start the savings period. 
+1)->2). In the call we calculate the initial amount of capital Capital<sub>*init*</sub> and call an price oracle to get the initital exchange rate &epsilon;<sub>*init*</sub> = &euro;/&#36; 
+
+2) In the savings period the Hedgers claim two tokens against their deposits. For 2 aDai they receive 1 aEURu + 1/&epsilon;<sub>*init*</sub> aEURs
+aEURu. aEURu and aEURs are ERC20 tokens they can freely trade around. For example they migth hold on to aEURu and sell their aEURs tokens to an retail investor.
+After some time the contract is called to start the redeemation period 1)->2 We calculate the total interest payments claimed in the period as Capital<sub>*final*</sub>-Capital<sub>*init*</sub> and set the final exchange rate by an new call to a price oracle.
+
+3) In the redeemation period, owners of both aEURs and aEURu can now reclaim their tokens. The total interest payments are distributed to investors/hedgers depending on their share of the total investment. aEURs holders further receive &epsilon;<sub>*init*</sub> aDai from the contract. aEURu holders receive their initital investment + investment * &delta;&epsilon;<sub>*init*</sub>. Where &epsilon;<sub>*init*</sub> = 2 - &epsilon;<sub>*final*</sub>/&epsilon;<sub>*init*</sub>. Hereby, they get increase their principal if
+&epsilon;<sub>*final*</sub> < &epsilon;<sub>*init*</sub> and need to pay out to hedgers if not.
+
+
+
+*Note 1) Traders are getting rewarded for the downside risk they take in USD by selling aEURs for a price p<&#8959(&epsilon;<sub>*init*</sub> Further they gain tokens when the EURO depreciates. In competitive markets, this should bring prices close to the [expected change in exchange rates. ](https://en.wikipedia.org/wiki/Interest_rate_parity)*
+
+*Note 2) Since we use USD as collateral as payout for both sides, we put in a conservative limit of 50% downwards/upwards  on exchange rate movements to make sure both sides will always get payed out (while obtaining a symmetric payount structure).  For the &euro;/&#36; currency pair this is would amount to an unpredecean volatility. A pool of multiple currencies might be used in the future to lower these restrictions* 
