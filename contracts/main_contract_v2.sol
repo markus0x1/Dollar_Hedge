@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+// todo: add events, add require statements, use chainlink oracles
+
 pragma solidity ^0.6.7;
 
 
