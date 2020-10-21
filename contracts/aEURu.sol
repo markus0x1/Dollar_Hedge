@@ -6,5 +6,5 @@ import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.0.1/contr
 
 
 contract aEURu is ERC20PresetMinterPauser {
-    constructor() public ERC20PresetMinterPauser("aEURu", "Aave Euro unstable") {}
+    constructor() public ERC20PresetMinterPauser("aEURu", "aEuro unstable") {}
 }
