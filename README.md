@@ -21,15 +21,15 @@ Our system has 3 main phases in which the actors can interact with the contract.
 1) In the waiting period, speculators deposit aDai in the contract. 
 After some time the contract can be called to start the savings period. 
 1)->2). In the request we calculate the initial capital amount and call a price oracle to set the initial exchange rate 
-&epsilon;<sub>*init*</sub> = &euro;/&#36; 
+e<sub>*init*</sub> = &euro;/&#36; 
 
 
 ![Alt](/HTML/diagrams/step_1_2.png)
 
 2) During the savings period, speculators claim two coins against their deposits. For 2 aDai they receive 1 aEURu + 1/&epsilon;<sub>*init*</sub> aEURs. aEURu and aEURs are ERC20-tokens and can be traded freely. For example, sepculators can keep their aEURu and sell aEURs to a retail investor.
-After some time the contract is called to start the redemption period 2)->3. We calculate the total interest payments claimed in the period as capital<sub>*final*</sub>-capital<sub>*init*</sub> and set the final exchange &epsilon;<sub>*final*</sub> rate by calling a price oracle again.
+After some time the contract is called to start the redemption period 2)->3. We calculate the total interest payments claimed in the period as capital<sub>*final*</sub>-capital<sub>*init*</sub> and set the final exchange e<sub>*final*</sub> rate by calling a price oracle again.
 
-3) During the redemption period, owners of both aEURs and aEURu can reclaim their tokens. The total interest payments are distributed to the investors/hedge holders according to their share of the total investment. Further, aEURs holders receive aEURs x &epsilon;<sub>*init*</sub> = aDai from the contract. aEURu holders receive 1-&delta;<sub>&epsilon;</sub> times the number of their tokens, where &delta;<sub>&epsilon;</sub> = (&epsilon;<sub>*final*</sub> - &epsilon;<sub>*init*</sub>)/&epsilon;<sub>*init*</sub>. Hereby they make a profit, if &epsilon;<sub>*final*</sub> < &epsilon;<sub>*init*</sub> and  must otherwise compensate the losses of the retail investors. E.g. they win money if the euro loses value (euro depreciates & dollar appreciates) and loose money if the euro gains value (euro appreciates & dollar depreciates). 
+3) During the redemption period, owners of both aEURs and aEURu can reclaim their tokens. The total interest payments are distributed to the investors/hedge holders according to their share of the total investment. Further, aEURs holders receive aEURs x &epsilon;<sub>*init*</sub> = aDai from the contract. aEURu holders receive 1-&delta;<sub>e</sub> times the number of their tokens, where &delta;<sub>e</sub> = (e<sub>*final*</sub> - e<sub>*init*</sub>)/e<sub>*init*</sub>. Hereby they make a profit, if &epsilon;<sub>*final*</sub> < &epsilon;<sub>*init*</sub> and  must otherwise compensate the losses of the retail investors. E.g. they win money if the euro loses value (euro depreciates & dollar appreciates) and loose money if the euro gains value (euro appreciates & dollar depreciates). 
 
 ![Alt](/HTML/diagrams/step_3_4.png)
 
