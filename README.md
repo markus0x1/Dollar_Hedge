@@ -10,29 +10,30 @@ Even exchange rates between economically developed and large economies are remar
 [2014 Switzerland](https://en.wikipedia.org/wiki/Swiss_franc). All of this makes the latest DEFI innovation less valuable to people outside the US, as your savings portfolio should not be exposed to such volatility.
 The entire DEFI sector is still quite small in the global economy, and the US dollar has large network effects. We therefore believe that it is neither feasible nor practical to solve this problem by introducing a large number of alternative stablecoins. Instead, we are creating a **risk hedging mechanism** for retail investors.
 
-
 ## Brief desription
 We propose a simple swap mechanism to hedge the currency risk for retail investors using stable USD coins. 
 As a first step, the stable coin will be lent through a lending protocol such as Aave or Compound. 
 The next step is for the user to wrap the interest-bearing stable coin in our contract. We leverage the Aave protocoll to produce interest on the deposits.
-Our contract works as a platform to connect two types of market participants. Retail investors buy in to receive interest on their deposits while insuring their deposits against exchange rate movements. More specific: They always receive their initital deposit back *in EURO*. Hedgers provide their capital to the pool. They benefit from exchange rate movements and pay retail investors out if the EURO appreciates in value. They can demand a fee to Retail investors for this service. 
+Our contract works as a platform to connect two types of market participants. Retail investors buy in to receive interest on their deposits while insuring their deposits against exchange rate movements. More specific: They always receive their initital deposit back *in EURO*. Speculators provide their capital to the pool. They benefit from exchange rate movements in their favour and pay retail investors out if the EURO appreciates in value. They can demand a fee from retail investors for this service. 
 
 ## Technical description
 Our system has 3 main phases in which the actors can interact with the contract. 
-1) In the waiting period, Hedgers deposit aDai in the contract. 
+1) In the waiting period, speculators deposit aDai in the contract. 
 After some time the contract can be called to start the savings period. 
-1)->2). In the request we calculate the initial capital amount capital<sub>*init*</sub> and call a price oracle to get the initial exchange rate 
+1)->2). In the request we calculate the initial capital amount and call a price oracle to get the initial exchange rate 
 &epsilon;<sub>*init*</sub> = &euro;/&#36; 
 
-2) During the savings period, the hedgers claim two coins against their deposits. For 2 aDai they receive 1 aEURu + 1/&epsilon;<sub>*init*</sub> aEURs
-aEURu. aEURu and aEURs are ERC20-tokens with which you can trade freely. For example, they can keep aEURu and sell their aEURs token to a retail investor.
-After some time the contract is called to start the redemption period 2)->3 We calculate the total interest payments claimed in the period as capital<sub>*final*</sub>-capital<sub>*init*</sub> and set the final exchange rate by calling a price oracle again.
+2) During the savings period, speculators claim two coins against their deposits. For 2 aDai they receive 1 aEURu + 1/&epsilon;<sub>*init*</sub> aEURs. aEURu and aEURs are ERC20-tokens and can be traded freely. For example, sepculators can keep their aEURu and sell aEURs to a retail investor.
+After some time the contract is called to start the redemption period 2)->3. We calculate the total interest payments claimed in the period as capital<sub>*final*</sub>-capital<sub>*init*</sub> and set the final exchange &epsilon;<sub>*final*</sub> rate by calling a price oracle again.
 
+3) During the redemption period, owners of both aEURs and aEURu can now reclaim their tokens. The total interest payments are distributed to the investors/hedge holders according to their share of the total investment. Further, aEURs holders receive aEURs x &epsilon;<sub>*init*</sub> = aDai from the contract. aEURu holders receive 1-&delta;<sub>&epsilon;</sub> times the number of their tokens, where &delta;<sub>&epsilon;</sub> = (&epsilon;<sub>*final*</sub> - &epsilon;<sub>*init*</sub>)/&epsilon;<sub>*init*</sub>. Hereby they make a profit, if &epsilon;<sub>*final*</sub> < &epsilon;<sub>*init*</sub> and  must otherwise compensate the losses of the retail investors. E.g. they win money if the euro depreciates (dollar appreciates) and loose money if the euro appreciates (dollar depreciates). 
 
-3) During the redemption period, owners of both aEURs and aEURu can now reclaim their tokens. The total interest payments are distributed to the investors/hedge holders according to their share of the total investment. aEURs holders will continue to receive &epsilon;<sub>*init*</sub> aDai from the contract. aEURu holders receive 1+&delta;<sub>&epsilon;</sub> times the number of their tokens, where &delta;<sub>&epsilon;</sub> = (&epsilon;<sub>*final*</sub> - &epsilon;<sub>*init*</sub>)/&epsilon;<sub>*init*</sub>. Hereby they have a profit, if &epsilon;<sub>*final*</sub> < &epsilon;<sub>*init*</sub> and  must otherwise compensate the losses of the retail investors.
+Steps 1-3) show that aEUR holders use their token to make an interest-bearing deposit whose value is linked to the EURO. 
+In this respect it works like a euro savings account.
 
-
-*Note 1) Dealers can benefit from additional by selling the aDAIs below their face value. In addition, they receive a profit when the EURO loses value. In competitive markets this should bring prices close to the [expected exchange rate change] (https://en.wikipedia.org/wiki/Interest_rate_parity)*.
+*Note 1) Dealers can benefit from additional by selling the aDAIs below their face value. In addition, they receive a profit when the EURO loses value. In competitive markets this should bring prices close to the [expected exchange rate change] (https://en.wikipedia.org/wiki/Interest_rate_parity).*
 
 *Note 2) Since we use USD as collateral for payouts for both sides, we set a conservative 50% limit for exchange rate fluctuations up/down.
-This ensures that both sides are always paid out.  
+This ensures that both sides are always paid out.*
+
+*Note 3) We expect speculators to be the more sophisticated users and are able to hedge their positions.*
