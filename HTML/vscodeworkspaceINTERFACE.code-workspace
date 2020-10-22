@@ -7,5 +7,7 @@
 			"path": "images"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "HTML"
+	}
 }
