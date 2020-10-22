@@ -34,6 +34,9 @@
 
         var current_adress;
 
+        var preloader= '<div class="preloader-wrapper small active"> <div class="spinner-layer spinner-white-only">      <div class="circle-clipper left">        <div class="circle"></div>      </div><div class="gap-patch">        <div class="circle"></div>      </div><div class="circle-clipper right">        <div class="circle"></div>      </div>    </div>  </div>';
+
+
         const ethEnabled = () => {
             if (window.ethereum) {
                 window.web3 = new Web3(window.ethereum);
@@ -133,8 +136,17 @@
 
                 (window.web3.eth.getAccounts()).then(function (result) {
                     current_adress = result[0];
+                    updateStaticValues();
                 });
             }
+
+        }
+
+        async function updateStaticValues(){
+            document.getElementById("aDaiInWallet").click();
+            document.getElementById("aEURsDisplay").click();
+            document.getElementById("aEURuDisplay").click();    
+         //   updateTotalPool();        
         }
 
         /* async function getAEURO() {
@@ -193,13 +205,23 @@
         
                                 console.log(shifted);
                                 document.getElementById("aDai").innerHTML = "your aDai: " + shifted;
-                            });
-        
-        
+                            });                
                 }*/
 
 
+        /*async function updateTotalPool() {
+            var MyContract = new web3.eth.Contract(mainContractAbi, contract_adress);
 
+            MyContract.methods.show_pool_balances().call()
+                .then(function (result) {
+                    var raw = result;
+                    //var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
+
+                   // console.log(shifted);
+                    document.getElementById("MarketSize").innerHTML = "Pool: " + raw.;                    
+                });
+
+        }*/
 
 
 
@@ -253,23 +275,14 @@
 
 
 
-
-
-
-
-
-
-
-
         async function AddADAIAllowance() {
             var MyContract = new window.web3.eth.Contract(aDaiAbi, aDAI_adress);
-            var adaiamounttofund = document.getElementById("aDAI_amount_to_fund").value;
-
+            var adaiamounttofund = document.getElementById("aDAI_amount_to_fund").value;      
             MyContract.methods.increaseAllowance(contract_adress, window.web3.utils.toWei(adaiamounttofund)).send({ from: current_adress })
                 .then(function (result) {
 
-                    console.log(result);
-
+                    //console.log(result);
+             
                     //document.getElementById("Monee").innerHTML = "coins: " + shifted;
                 });
 
@@ -287,6 +300,7 @@
 
                     console.log(shifted);*/
                     //document.getElementById("Monee").innerHTML = "coins: " + shifted;
+                    updateStaticValues();
                 });
         }
 
@@ -299,7 +313,8 @@
                     var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
 
                     console.log(shifted);*/
-                    //document.getElementById("Monee").innerHTML = "coins: " + shifted;
+                    //document.getElementById("Monee").innerHTML = "coins: " + shifted;#
+                    updateStaticValues();
                 });
 
         }
@@ -340,6 +355,7 @@
  
                      console.log(shifted);
                      //document.getElementById("Monee").innerHTML = "coins: " + shifted;*/
+                     updateStaticValues();
                 });
 
         }
@@ -354,6 +370,7 @@
 
                     console.log(shifted);
                     //document.getElementById("Monee").innerHTML = "coins: " + shifted;*/
+                    updateStaticValues();
                 });
         }
 
@@ -391,6 +408,21 @@
             background-image: url(img/overlay_bg.png);
             z-index: 1;
         }
+
+        p {
+            color: black;
+        }
+
+        .tabs .tab a:hover, .tabs .tab a.active {
+            background-color: transparent;
+            color: white;
+        }
+      
+
+        .tabs .tab a   {
+            background-color: transparent;
+            color: lightgray;
+        }
     </style>
 
 
@@ -402,9 +434,11 @@
     <header>
 
         <ul id="nav-mobile" class="sidenav sidenav-fixed" style="transform: translateX(0%);">
-            <li>
-                Cortex Hedge
-            </li>
+            <div> <div class="brand-logo">
+                <h4><a class="black-text" href="Web3Test.html"> Cortex Hedge</a></h4>
+            </div>
+        </div>
+            <div class="divider"></div>
             <div class="section">
                 <li>
                     <button id="enableEthereumButton" class="waves-effect waves-light btn">Enable Wallet</button>
@@ -423,7 +457,6 @@
             <div class="divider"></div>
             <div class="section">
                 <li><a href="about.html">About<i class="material-icons">public</i></a></li>
-                <li><a href="Web3Test.html">FAQ<i class="material-icons ">question_answer</i></a></li>
                 <li><a href="https://github.com/SchickMarkus/Dollar_Hedge">Documentation<i
                             class="material-icons ">code</i></a>
                 </li>
@@ -436,86 +469,92 @@
 
         <div class="row">
             <a href="#" data-target="nav-mobile" class="top-nav sidenav-trigger full hide-on-large-only"><i
-                    class="material-icons right">menu</i></a>
+                    class="material-icons left">menu</i></a>
         </div>
 
 
         <div class="row">
-            <!-- Page Content goes here -->
+            <!-- Page Content goes here 
 
 
             <div class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <div id="MarketSize"> Pool: 0 <i class="material-icons right">account_balance</i></div>
+                <div id="MarketSize"> Pool: 0 <i class="material-icons left">account_balance</i></div>
             </div>
             <div class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <div id="aDai"> Pool Growth since prepool closed: <i class="material-icons right">show_chart</i></div>
-            </div>
+                <div id="aDai"> Pool Growth since prepool closed: <i class="material-icons left">show_chart</i></div>
+            </div>-->
 
         </div>
 
         <div class="row">
             <div class="col s12 m8 offset-m1 xl7 offset-xl1">
+                <div class="card ">
+                    
+                    <div class="card-tabs">
+                        <ul class="tabs teal">
+                            <li class="tab col s3"><a href="#test1">Invest</a></li>
+                            <li class="tab col s3"><a class="active" href="#test2">Claim Tokens</a></li>
+                            <li class="tab col s3 "><a href="#test3">Exchange your tokens</a></li>
+                            <li class="tab col s3"><a href="#test4">Redeem aDAI</a></li>
+                        </ul>
+                    </div>
+                    <div class="card-content grey lighten-4">
+                        <div id="test1" >
+                            <div class="input-field ">
 
-                <ul class="tabs">
-                    <li class="tab col s3"><a href="#test1">Invest</a></li>
-                    <li class="tab col s3"><a class="active" href="#test2">Claim Tokens</a></li>
-                    <li class="tab col s3 "><a href="#test3">Exchange your tokens</a></li>
-                    <li class="tab col s3"><a href="#test4">Redeem aDAI</a></li>
-                </ul>
+                                <input id="aDAI_amount_to_fund" type="number" class="validate">
+                                <label for="aDAI_amount_to_fund">aDAI amount</label>
+                            </div>
+                            <button id="aDAIAllowance" class="waves-effect waves-light btn">Add Allowance</button> <br>
+                            <button id="DepositADAI" class="waves-effect waves-light btn">deposit aDai <i
+                                    class="material-icons right">call_merge</i><i
+                                    class="material-icons right">account_balance</i></button>
+                        </div>
+                        <div id="test2" >
+                            <button id="MintTokens" class="waves-effect waves-light btn">Mint Tokens <i
+                                    class="material-icons right">content_copy</i> </button>
+                        </div>
+                        <div id="test3" >
+                            <p class="flow-text">Trade your shares</p>
 
-            </div>
-            <div id="test1" class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <div class="input-field ">
-                    <input id="aDAI_amount_to_fund" type="number" class="validate">
-                    <label for="aDAI_amount_to_fund">aDAI amount</label>
+                            <iframe src="https://kovan.balancer.exchange/#/swap" width="100%" height="500"
+                                style=" left: 50%; width:100%;height:800;max-width:600;" frameborder="0"
+                                scrolling="no"></iframe>
+                        </div>
+                        <div id="test4" >
+                            <button id="AddAEURsAllowance" class="waves-effect waves-light btn">Add aEURs
+                                Allowance</button>
+                            <br>
+                            <button id="RedeemAEURs" class="waves-effect waves-light btn">Redeem aEURs <i
+                                    class="material-icons right">euro_symbol</i></button><br><br>
+                            <button id="AddAEURuAllowance" class="waves-effect waves-light btn">Add aEURu
+                                Allowance</button>
+                            <br>
+                            <button id="RedeemAEURu" class="waves-effect waves-light btn">Redeem aEURu <i
+                                    class="material-icons right">compare_arrows</i></button>
+                        </div>
+                    </div>
+                   
                 </div>
-                <button id="aDAIAllowance" class="waves-effect waves-light btn">Add Allowance</button> <br>
-                <button id="DepositADAI" class="waves-effect waves-light btn">deposit aDai <i
-                        class="material-icons right">call_merge</i><i class="material-icons right">account_balance</i></button>
             </div>
-            <div id="test2" class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <button id="MintTokens" class="waves-effect waves-light btn">Mint Tokens <i
-                        class="material-icons right">content_copy</i> </button>
-            </div>
-            <div id="test3" class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <p class="flow-text">Trade your shares</p>
-
-                <iframe src="https://app.uniswap.org/#/swap" width="100%" height="500"
-                    style=" left: 50%; width:100%;height:800;max-width:600;" frameborder="0" scrolling="no"></iframe>
-            </div>
-            <div id="test4" class="col s12 m8 offset-m1 xl7 offset-xl1">
-                <button id="AddAEURsAllowance" class="waves-effect waves-light btn">Add aEURs Allowance</button> <br>
-                <button id="RedeemAEURs" class="waves-effect waves-light btn">Redeem aEURs <i
-                        class="material-icons right">euro_symbol</i></button><br><br>
-                <button id="AddAEURuAllowance" class="waves-effect waves-light btn">Add aEURu Allowance</button> <br>
-                <button id="RedeemAEURu" class="waves-effect waves-light btn">Redeem aEURu <i
-                        class="material-icons right">compare_arrows</i></button>
-            </div>
-
         </div>
     </div>
 
-    </div>
-    </div>
+
+        <!--JavaScript at end of body for optimized loading-->
+        <script type="text/javascript" src="js/materialize.min.js"></script>
+
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function () {
+                var elems = document.querySelectorAll('.sidenav');
+                var instances = M.Sidenav.init(elems);
+                var tabs = document.querySelectorAll('.tabs');
+
+                var instance = M.Tabs.init(tabs);
+            });
 
 
-
-
-
-    <!--JavaScript at end of body for optimized loading-->
-    <script type="text/javascript" src="js/materialize.min.js"></script>
-
-    <script type="text/javascript">
-        document.addEventListener('DOMContentLoaded', function () {
-            var elems = document.querySelectorAll('.sidenav');
-            var instances = M.Sidenav.init(elems);
-            var tabs = document.querySelectorAll('.tabs');
-
-            var instance = M.Tabs.init(tabs);
-        });
-
-
-    </script>
+        </script>
 </body>
 
 </html>

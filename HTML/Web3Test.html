@@ -158,6 +158,17 @@
             color: black;
         }
 
+        .tabs .tab a:hover, .tabs .tab a.active {
+            background-color: transparent;
+            color: white;
+        }
+      
+
+        .tabs .tab a   {
+            background-color: transparent;
+            color: lightgray;
+        }
+
     </style>
 
 
@@ -167,20 +178,18 @@
 <body>
     <nav>
         <div class="nav-wrapper teal">
-            <a href="#!" class="brand-logo"> Cortex Hedge</a>
+            <a href="Web3Test.html" class="brand-logo"> Cortex Hedge</a>
             <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
             <ul class="right hide-on-med-and-down">
                 <li><a href="app.html" class="waves-effect waves-light btn-large white teal-text">DAPP</a></li>
-                <li><a href="about.html">About <i class="material-icons left">public</i></a></li>
-                <li><a href="Web3Test.html">FAQ <i class="material-icons left">question_answer</i></a></li>
+                <li><a href="about.html">About <i class="material-icons left">public</i></a></li>               
                 <li><a href="https://github.com/SchickMarkus/Dollar_Hedge">Documentation<i class="material-icons left">code</i></a></li>           
             </ul>
         </div>
     </nav>
 
     <ul class="sidenav" id="mobile-demo">
-        <li><a href="about.html">About<i class="material-icons">public</i></a></li>
-        <li><a href="Web3Test.html">FAQ<i class="material-icons">question_answer</i></a></li>
+        <li><a href="about.html">About<i class="material-icons">public</i></a></li>        
         <li><a href="https://github.com/SchickMarkus/Dollar_Hedge">Documentation<i class="material-icons">code</i></a>
         <li><a href="app.html" class="waves-effect waves-light btn-large ">DAPP</a></li>
                
@@ -246,8 +255,8 @@
 
   
         <div class="col s12">
-            <div class="card">
-                <div class="card-content flow-text">
+            <div class="card teal">
+                <div class="card-content white-text flow-text">
                     <div class="col s12">How it works for Savers:</div> <br>
 
                     <!--I WANT TO SAVE MY EUROS WITH AAVE, BUT IM AFRAID TO LOOSE MY SAVINGS FROM EXCHAGE RATE MOVEMENTS.<br>
@@ -258,7 +267,7 @@
                 
 
                 <div class="card-tabs">
-                    <ul class="tabs">
+                    <ul class="tabs teal">
                         <li class="tab col s3"><a href="#test1a">Buy Tokens</a></li>
                         <li class="tab col s3"><a class="active" href="#test2a">Redeem aDAI</a></li>
                     </ul>
@@ -281,9 +290,9 @@
         <br>
 
      
-        <div class="col s12">
-            <div class="card ">
-                <div class="card-content flow-text">
+        <div class="col s12 ">
+            <div class="card teal">
+                <div class="card-content white-text flow-text">
                     <div class="col s12">How it works for Investors:</div> <br>
 
                            <!-- I WANT TO MAXIMIZE MY YIELDS AND FIND SINGLE DIGIT PRICE CHANGES CUTE. -->
@@ -293,8 +302,8 @@
                 </div>
                 
 
-                <div class="card-tabs">
-                    <ul class="tabs">
+                <div class="card-tabs teal">
+                    <ul class="tabs teal">
                         <li class="tab col s3"><a href="#test1">Invest</a></li>
                         <li class="tab col s3"><a class="active" href="#test2">Claim Tokens</a></li>
                         <li class="tab col s3 "><a href="#test3">Sell tokens</a></li>
