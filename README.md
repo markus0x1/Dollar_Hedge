@@ -1,5 +1,5 @@
 # Dollar_Hedge
-An simple dapp to hedge exchange rate risk using tokenized interest bearing stablecoins. Developed as part of the ETHOnline 2020 Hackathon (https://ethonline.org/).
+A smart way to hedge forex exchange rate risks.
 
 ## Motivation
 Stablecoins are a well-known instrument for hedging the volatility of crypto currencies. When  supplied to a lending protocol and they become an attractive alternative to a savings accounts. However, most Stablecoins are demonised in US dollars. This is useful as it allows specialised AMMs such as Curve to trade between them without any wild fluctuations. 
