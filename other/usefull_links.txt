@@ -10,3 +10,6 @@ https://docs.openzeppelin.com/learn/developing-smart-contracts
 https://kovan.balancer.exchange/#/swap
 https://kovan.pools.balancer.exchange/#/
 https://testnet.aave.com/
+
+# video
+https://youtu.be/QJI1wS8uPBw
