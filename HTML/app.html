@@ -234,7 +234,8 @@
                     var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
 
                     console.log(shifted);
-                    document.getElementById("aDaiInWallet").innerHTML = "your aDai: " + shifted;
+                    document.getElementById("aDaiInWallet").innerHTML = "your aDai: " + Math.round(shifted * 100) / 100;
+
                     aDAI_amount = raw;
                 });
 
@@ -251,7 +252,7 @@
                     var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
 
                     console.log(shifted);
-                    document.getElementById("aEURsDisplay").innerHTML = "your aEURs: " + shifted;
+                    document.getElementById("aEURsDisplay").innerHTML = "your aEURs: " + Math.round(shifted * 100) / 100;
                     aEURs_amount = raw;
                 });
 
@@ -267,7 +268,7 @@
                     var shifted = raw / Math.pow(10, 18); // move decimal 18 places to the left
 
                     console.log(shifted);
-                    document.getElementById("aEURuDisplay").innerHTML = "your aEURu: " + shifted;
+                    document.getElementById("aEURuDisplay").innerHTML = "your aEURu: " + Math.round(shifted * 100) / 100;
                     aEURu_amount = raw;
                 });
 
@@ -469,7 +470,7 @@
 
         <div class="row">
             <a href="#" data-target="nav-mobile" class="top-nav sidenav-trigger full hide-on-large-only"><i
-                    class="material-icons left">menu</i></a>
+                    class="material-icons medium left teal-text">menu</i></a>
         </div>
 
 
@@ -487,14 +488,14 @@
         </div>
 
         <div class="row">
-            <div class="col s12 m8 offset-m1 xl7 offset-xl1">
+            <div class="col s12 m8 offset-m2 xl7 offset-xl1">
                 <div class="card ">
                     
                     <div class="card-tabs">
                         <ul class="tabs teal">
                             <li class="tab col s3"><a href="#test1">Invest</a></li>
-                            <li class="tab col s3"><a class="active" href="#test2">Claim Tokens</a></li>
-                            <li class="tab col s3 "><a href="#test3">Exchange your tokens</a></li>
+                            <li class="tab col s3"><a class="active" href="#test2">Mint Tokens</a></li>
+                            <li class="tab col s3 "><a href="#test3">Trade</a></li>
                             <li class="tab col s3"><a href="#test4">Redeem aDAI</a></li>
                         </ul>
                     </div>
@@ -535,6 +536,9 @@
                         </div>
                     </div>
                    
+                </div>
+                <div class="col s12 center-align">
+                    <img src="images/Timeline.png" class="responsive-img" > 
                 </div>
             </div>
         </div>
