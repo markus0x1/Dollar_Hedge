@@ -1,5 +1,6 @@
 # Dollar_Hedge
 A smart way to hedge forex exchange rate risks.
+This project was created as part of [ETHOnline](https://ethglobal.online/).
 
 ## Motivation
 Stablecoins are a well-known instrument for hedging the volatility of crypto currencies. When  supplied to a lending protocol and they become an attractive alternative to a savings accounts. However, most Stablecoins are demonised in US dollars. This is useful as it allows specialised AMMs such as Curve to trade between them without any wild fluctuations. 
